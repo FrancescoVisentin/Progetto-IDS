@@ -5,8 +5,11 @@ import java.util.NoSuchElementException;
 
 public class ListAdapter implements HList
 {
+    //Il vettore usato come adaptee per l'adapter.
     private Vector vec;
 
+    //Variabile usata dagli iteratori per verificare se la lista vine modificata
+    //durante il processo di iterazione.
     int modCount;
 
     /**
@@ -128,7 +131,7 @@ public class ListAdapter implements HList
 
     /**
      * Removes all of the elements from this list.
-     * This list will be empty after this call returns (unless it throws an exception).
+     * This list will be empty after this call returns.
      */
     @Override
     public void clear()
@@ -515,7 +518,7 @@ public class ListAdapter implements HList
     
 
 
-    //Sottoclassi di supporto ai metodi
+    //Sottoclassi di supporto ai metodi:
 
     /**
      * Simple Iterator over a ListAdapter object. It can traverse the vector associated
@@ -827,5 +830,4 @@ public class ListAdapter implements HList
                 vec.setElementAt(o, index);
         }
     }
-
 }
