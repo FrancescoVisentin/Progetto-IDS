@@ -1,17 +1,21 @@
 package myAdapter;
 
 import myLib.Vector;
+import java.util.NoSuchElementException;
 
 public class ListAdapter implements HList
 {
     private Vector vec;
+
+    int modCount;
 
     /**
      * Constructs a new ListAdapter, with initial size of zero.
      */
     public ListAdapter()
     {
-        vec = new Vector();
+        vec = new myLib.Vector();
+        modCount = 0;
     }
 
     /**
@@ -26,10 +30,12 @@ public class ListAdapter implements HList
         if (c == null)
             throw new NullPointerException();
 
-        vec = new Vector();
+        vec = new myLib.Vector();
         HIterator iter = c.iterator();
         while (iter.hasNext())
             vec.addElement(iter.next());
+
+        modCount = 0;
     }
 
     /**
@@ -50,6 +56,7 @@ public class ListAdapter implements HList
             throw new NullPointerException();
 
         vec.insertElementAt(element, index);
+        modCount++;
     }
 
     /**
@@ -127,6 +134,7 @@ public class ListAdapter implements HList
     public void clear()
     {
         vec.removeAllElements();
+        modCount++;
     }
 
     /**
@@ -273,10 +281,15 @@ public class ListAdapter implements HList
         return vec.size() <= 0;
     }
 
+    /**
+     * Returns an iterator over the elements in this list in proper sequence.
+     *
+     * @return  an iterator over the elements in this list in proper sequence.
+     */
     @Override
-    public HIterator iterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public HIterator iterator()
+    {
+        return new Iter(vec);
     }
 
     /**
@@ -298,16 +311,38 @@ public class ListAdapter implements HList
         return vec.lastIndexOf(o);
     }
 
+    /**
+     * Returns a list iterator of the elements in this list (in proper sequence).
+     *
+     * @return a list iterator of the elements in this list (in proper sequence).
+     */
     @Override
-    public HListIterator listIterator() {
-        // TODO Auto-generated method stub
-        return null;
+    public HListIterator listIterator()
+    {
+        return new ListIter(vec);
     }
 
+    /**
+     * Returns a list iterator of the elements in this list (in proper sequence),
+     * starting at the specified position in this list. The specified index indicates the
+     * first element that would be returned by an initial call to the {@code next} method. An
+     * initial call to the {@code previous} method would return the element with the specified
+     * index minus one.
+     *
+     * @param   index index of first element to be returned from
+     *          the list iterator (by a call to the next method).
+     * @return  a list iterator of the elements in this list (in proper sequence),
+     *          starting at the specified position in this list.
+     * @throws  IndexOutOfBoundsException if the index is out of range
+     *          {@code (index < 0 || index > size())}.
+     */
     @Override
-    public HListIterator listIterator(int index) {
-        // TODO Auto-generated method stub
-        return null;
+    public HListIterator listIterator(int index)
+    {
+        if (index < 0 || index > vec.size())
+            throw new IndexOutOfBoundsException();
+
+        return new ListIter(vec, index);
     }
 
     /**
@@ -478,4 +513,319 @@ public class ListAdapter implements HList
             return a;
     }
     
+
+
+    //Sottoclassi di supporto ai metodi
+
+    /**
+     * Simple Iterator over a ListAdapter object. It can traverse the vector associated
+     * with the ListAdapter forwards, it can performs remove operations.
+     */
+    private class Iter implements HIterator
+    {
+        protected myLib.Vector v;
+        protected int index;
+        protected int expectedModCount;
+        protected boolean nextRemovable;
+        
+        /**
+         * Construct a new Iterator over the given Vector, starting from
+         * the specified index
+         *
+         * @param   vv the given Vector
+         * @param   startIndex the index the iteration will start from.
+         */
+        Iter(myLib.Vector vv, int startIndex)
+        {
+            v = vv;
+            index = startIndex;
+            expectedModCount = modCount;
+            nextRemovable = false;
+        }
+
+        /**
+         * Construct a new iterator over the given Vector
+         *
+         * @param   vv the given Vector
+         */
+        Iter(myLib.Vector vv)
+        {
+            this(vv,0);
+        }
+
+        /**
+         * Returns {@code true} if the iteration has more elements. (In
+         * other words, returns {@code true} if {@code next} would return an element
+         * rather than throwing an exception).
+         *
+         * @return  {@code true} if the iterator has more elements.
+         */
+        @Override
+        public boolean hasNext()
+        {
+            return index < v.size();
+        }
+
+        /**
+         * Returns the {@code next} element in the iteration.
+         * The behavior of the iterator is unspecified if the underlying collection is modified
+         * while the iteration is in progress.
+         *
+         * @return  the {@code next} element in the iteration.
+         * @throws  NoSuchElementException iteration has no more elements.
+         */
+        @Override
+        public Object next()
+        {
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            nextRemovable = true;
+            return vec.elementAt(index++);
+        }
+
+        /**
+         * Removes from the underlying collection the last element returned by the iterator.
+         * This method can be called only once per call to {@code next}. The behavior of the iterator
+         * is unspecified if the underlying collection is modified while the iteration
+         * is in progress in any way other than by calling this method.
+         *
+         * @throws  IllegalStateException if the next method has not yet been called, or
+         *          the {@code remove} method has already been called after the last call to
+         *          the {@code next} method.
+         */
+        @Override
+        public void remove()
+        {
+            //In questo caso se la lista è stata modificata durante il processo di iterazione
+            //lancio un eccezione piuttosto che avere undefined behavior.
+            if (expectedModCount  != modCount)
+                throw new IllegalStateException("Underling list has been modified during the iteration");
+
+            if (!nextRemovable)
+                throw new IllegalStateException();
+            
+            nextRemovable = false;
+            vec.removeElementAt(--index);
+        }
+        
+    }
+
+    /**
+     * ListIterator over the given Vector. It can traverse the vector associated
+     * with the ListAdapter forwards and in reverse, it can performs remove and inserction
+     * operations.
+     */
+    private class ListIter extends Iter implements HListIterator
+    {
+        private boolean prevRemovable;
+
+        /**
+         * Construct a new ListIterator over the given Vector, starting from
+         * the specified index.
+         *
+         * @param   vv the given Vector.
+         * @param   startindex the index the iteration will start from..
+         */
+        ListIter(myLib.Vector vv, int startIndex)
+        {
+            super(vv, startIndex);
+            prevRemovable = false;
+        }
+
+        /**
+         * Construct a new ListIterator over the given Vector.
+         *
+         * @param   vv the given Vector.
+         */
+        ListIter(myLib.Vector vv)
+        {
+            this(vv, 0);
+        }
+
+        /**
+         * Inserts the specified element into the list. The element is inserted immediately
+         * before the next element that would be returned by {@code next}, if any,
+         * and after the next element that would be returned by {@code previous}, if any.
+         * (If the list contains no elements, the new element becomes the sole element on the list.)
+         * The new element is inserted before the implicit cursor: a subsequent call to {@code next}
+         * would be unaffected, and a subsequent call to {@code previous} would return the new element.
+         * (This call increases by one the value that would be returned by a call to {@code nextIndex}
+         * or {@code previousIndex}.)
+         * 
+         * The behavior of the iterator is unspecified if the underlying collection is modified while the iteration
+         * is in progress in any way other than by calling this method or the {@code remove} method.
+         *
+         * @param   o the element to insert.
+         * @throws  NullPointerException if the specified element is null.
+         * @see  #remove()
+         */
+        @Override
+        public void add(Object o)
+        {
+            //In questo caso se la lista è stata modificata durante il processo di iterazione
+            //lancio un eccezione piuttosto che avere undefined behavior.
+            if (expectedModCount  != modCount)
+                throw new IllegalStateException("Underling list has been modified during the iteration");
+
+            if (o == null)
+                throw new NullPointerException();
+
+            nextRemovable = false;
+            prevRemovable = false;
+            vec.insertElementAt(o, index++);
+        }
+
+        /**
+         * Returns {@code true} if this list iterator has more elements when traversing the
+         * list in the reverse direction. (In other words, returns {@code true} if
+         * {@code previous} would return an element rather than throwing an exception).
+         *
+         * @return  {@code true} if the list iterator has more elements when traversing
+         *          the list in the reverse direction.
+         */
+        @Override
+        public boolean hasPrevious()
+        {
+            return index > 0;
+        }
+
+        /**
+         * Returns the next element in the list. This method may be called repeatedly
+         * to iterate through the list, or intermixed with calls to {@code previous} to go
+         * back and forth. (Note that alternating calls to {@code next} and {@code previous}
+         * will return the same element repeatedly).
+         *
+         * @return  the next element in the list.
+         * @throws  NoSuchElementException if the iteration has no next element.
+         */
+        @Override
+        public Object next()
+        {
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            prevRemovable = false;
+            return super.next();
+        }
+
+        /**
+         * Returns the index of the element that would be returned by a subsequent
+         * call to {@code next}. (Returns list size if the list iterator is at the
+         * end of the list.)
+         *
+         * @return  the index of the element that would be returned by a
+         *          subsequent call to {@code next}, or list size if the
+         *          list iterator is at end of list.
+         */
+        @Override
+        public int nextIndex() 
+        {
+            return index;
+        }
+
+        /**
+         * Returns the previous element in the list. This method may be called repeatedly
+         * to iterate through the list backwards, or intermixed with calls to {@code next} to go
+         * back and forth. (Note that alternating calls to {@code next} and {@code previous}
+         * will return the same element repeatedly.)
+         *
+         * @return  the previous element in the list.
+         * @throws  NoSuchElementException if the iteration has no previous element.
+         */
+        @Override
+        public Object previous()
+        {
+            if(!hasPrevious())
+                throw new NoSuchElementException();
+            
+            nextRemovable = false;
+            prevRemovable = true;
+
+            return vec.elementAt(--index);
+        }
+
+        /**
+         * Returns the index of the element that would be returned by a subsequent
+         * call to {@code previous}. (Returns -1 if the list iterator is at the beginning of the list.)
+         *
+         * @return  the index of the element that would be returned by a subsequent call
+         *          to {@code previous}, or -1 if list iterator is at beginning of list.
+         */
+        @Override
+        public int previousIndex()
+        {
+            return index-1;
+        }
+
+        /**
+         * Removes from the list the last element that was returned by {@code next} or
+         * {@code previous}. This call can only be made once per call to {@code next} or
+         * {@code previous}. It can be made only if {@code ListIterator.add} has not been
+         * called after the last call to {@code next} or {@code previous}.
+         *
+         * The behavior of the iterator is unspecified if the underlying collection is modified while the iteration
+         * is in progress in any way other than by calling this method or the {@code add} method.
+         * 
+         * @throws  IllegalStateException neither {@code next} nor {@code previous} have
+         *          been called, or {@code remove} or {@code add} have been called after
+         *          the last call to {@code previous} or {@code previous}.
+         * @see     #add(Object)
+         */
+        @Override
+        public void remove()
+        {
+            //In questo caso se la lista è stata modificata durante il processo di iterazione
+            //lancio un eccezione piuttosto che avere undefined behavior.
+            if (expectedModCount  != modCount)
+                throw new IllegalStateException("Underling list has been modified during the iteration");
+
+            if (!nextRemovable && !prevRemovable)
+                throw new IllegalStateException();
+
+            if (nextRemovable)
+                vec.removeElementAt(--index);
+            else
+                vec.removeElementAt(index);
+            
+            nextRemovable = false;
+            prevRemovable = false;
+        }
+
+        /**
+         * Replaces the last element returned by {@code next} or {@code previous} with
+         * the specified element. This call can be made only if neither {@code ListIterator.remove}
+         * nor {@code ListIterator.add} have been called after the last call to {@code next}
+         * or {@code previous}.
+         * 
+         * The behavior of the iterator is unspecified if the underlying collection is modified while the iteration
+         * is in progress.
+         *
+         * @param   o the element to insert.
+         * @throws  IllegalStateException if neither next nor previous have been called,
+         *          or {@code remove} or {@code add} have been called after the last call
+         *          to {@code next} or {@code previous}.
+         * @throws  NullPointerException if the specified element is null.
+         */
+        @Override
+        public void set(Object o)
+        {
+            //In questo caso se la lista è stata modificata durante il processo di iterazione
+            //lancio un eccezione piuttosto che avere undefined behavior.
+            if (expectedModCount  != modCount)
+                throw new IllegalStateException("Underling list has been modified during the iteration");
+
+            if (!nextRemovable && !prevRemovable)
+                throw new IllegalStateException();
+
+            if (o == null)
+                throw new NullPointerException();
+
+            if (nextRemovable)
+                vec.setElementAt(o, index-1);
+            else
+                vec.setElementAt(o, index);
+        }
+    }
+
 }
