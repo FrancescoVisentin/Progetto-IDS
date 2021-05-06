@@ -2,6 +2,19 @@ package myAdapter;
 
 public interface HMap
 {
+    public static interface Entry
+    {
+        boolean equals(Object o);
+
+        Object getKey();
+
+        Object getValue();
+
+        int hashCode();
+
+        Object setValue(Object o);
+    }
+
     void clear();
 
     boolean containsKey(Object key);
@@ -12,7 +25,7 @@ public interface HMap
 
     boolean equals(Object o);
 
-    Object get(Object o);
+    Object get(Object key);
 
     int hashCode();
 
