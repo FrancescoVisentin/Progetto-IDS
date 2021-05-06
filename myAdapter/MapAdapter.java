@@ -78,7 +78,7 @@ public class MapAdapter implements HMap
     @Override
     public HSet entrySet()
     {
-        return new MapSet(false);
+        return new EntrySet();
     }
 
     /**
@@ -166,7 +166,7 @@ public class MapAdapter implements HMap
     @Override
     public HSet keySet()
     {
-        return new MapSet(true);
+        return new KeySet();
     }
 
     /**
@@ -242,10 +242,18 @@ public class MapAdapter implements HMap
         return map.size();
     }
 
+    /**
+     * Returns a collection view of the values contained in this map.
+     * The collection is backed by the map, so changes to the map are reflected in the collection, and vice-versa.
+     * If the map is modified while an iteration over the collection is in progress,
+     * the results of the iteration are undefined. The collection supports element removal,
+     * which removes the corresponding mapping from the map, via the {@code Iterator.remove, Collection.remove,
+     * removeAll, retainAll, clear} operations. It does not support the add or addAll operations.
+     */
     @Override
-    public HCollection values() {
-        // TODO Auto-generated method stub
-        return null;
+    public HCollection values()
+    {
+        return new ValueSet();
     }
 
     //Classi private di supporto
@@ -328,15 +336,8 @@ public class MapAdapter implements HMap
         }
     }
 
-    private class MapSet implements HSet
+    private class EntrySet implements HSet
     {
-        private boolean key;
-
-        public MapSet(boolean k)
-        {
-            key = k;
-        }
-
         /**
          * Unsupported Operation
          */
@@ -367,8 +368,6 @@ public class MapAdapter implements HMap
 
         /**
          * Returns {@code true} if this set contains the specified element.
-         * More formally, returns {@code true} if and only if this set
-         * contains an element e such that (o==null ? e==null : o.equals(e))
          * 
          * @param o - element whose presence in this set is to be tested.
          * @return {@code true} if this set contains the specified element.
@@ -380,11 +379,6 @@ public class MapAdapter implements HMap
             if (o == null)
                 throw new NullPointerException();
 
-            //Set usato da keySet. Le chiavi possono essere qualsiasi Object.
-            if(key)
-                return map.containsKey(o);
-
-            //Set usato da entrySet. Può contenere solo oggetti di HMap.Entry
             if (!(o instanceof HMap.Entry))
                 return false;
 
@@ -428,7 +422,7 @@ public class MapAdapter implements HMap
             if (o == null || !(o instanceof HSet))
                 return false;
             
-            MapSet s = (MapSet)o;
+            HSet s = (HSet)o;
             if (size() != s.size())
                 return false;
             
@@ -465,15 +459,21 @@ public class MapAdapter implements HMap
             return size() <= 0;
         }
 
+        /**
+         * Returns an iterator over the elements in this set.
+         * 
+         * @return an iterator over the elements in this set.
+         */
         @Override
-        public HIterator iterator() {
+        public HIterator iterator()
+        {
             // TODO Auto-generated method stub
             return null;
         }
 
         /**
          * Removes the specified element from this set if it is present.
-         * Returns true if the set contained the specified element.
+         * Returns {@code true} if the set contained the specified element.
          * The set and the map it is backed by will not contain the specified element once the call returns.
          * 
          * @param o - object to be removed from this set, if present.
@@ -486,11 +486,6 @@ public class MapAdapter implements HMap
             if (o == null)
                 throw new NullPointerException();
 
-            //Set usato da keySet. Le chiavi possono essere qualsiasi Object.
-            if(key)
-                return map.remove(o) != null;
-
-            //Set usato da entrySet. Può contenere solo oggetti di HMap.Entry
             if (!(o instanceof HMap.Entry))
                 return false;
 
@@ -570,23 +565,12 @@ public class MapAdapter implements HMap
         public Object[] toArray()
         {   
             int i = 0;
-            Enumeration e = map.keys();
+            HIterator it = iterator();
+            Object[] ret = new Object[map.size()];
 
-            if(key)
-            {
-                Object[] ret = new Object[map.size()];
-                while (e.hasMoreElements())
-                    ret[i++] = e.nextElement();
+            while (it.hasNext())
+                ret[i++] = it.next();
 
-                return ret;
-            }
-
-            HMap.Entry[] ret = new HMap.Entry[map.size()];
-            while (e.hasMoreElements())
-            {
-                Object k = e.nextElement();
-                ret[i++] = new HEntry(k, map.get(k));
-            }
             return ret;
         }
 
@@ -607,26 +591,121 @@ public class MapAdapter implements HMap
                 return toArray();
 
             int i = 0;
-            Enumeration e = map.keys();
+            HIterator it = iterator();
 
-            if(key)
-            {
-                //può generare ArrayStoreExceptio.
-                while (e.hasMoreElements())
-                    a[i++] = e.nextElement();
-
-                return a;
-            }
-
-            while (e.hasMoreElements())
-            {
-                //può generare ArrayStoreExceptio.
-                Object k = e.nextElement();
-                a[i++] = new HEntry(k, map.get(k));
-            }
+            //può generare ArrayStoreException.
+            while (it.hasNext())
+                a[i++] = it.next();
 
             return a;
         }
-        
+    }
+
+    private class KeySet extends EntrySet
+    {
+        /**
+         * Returns {@code true} if this set contains the specified element.
+         * 
+         * @param o - element whose presence in this set is to be tested.
+         * @return {@code true} if this set contains the specified element.
+         * @throws NullPointerException - if the specified element is null.
+         */
+        @Override
+        public boolean contains(Object o)
+        {
+            if (o == null)
+                throw new NullPointerException();
+
+            return map.containsKey(o);
+        }
+
+        /**
+         * Returns an iterator over the elements in this set.
+         * 
+         * @return an iterator over the elements in this set.
+         */
+        @Override
+        public HIterator iterator()
+        {
+            // TODO Auto-generated method stub
+            return super.iterator();
+        }
+
+        /**
+         * Removes the specified element from this set if it is present.
+         * Returns {@code true} if the set contained the specified element.
+         * The set and the map it is backed by will not contain the specified element once the call returns.
+         * 
+         * @param o - object to be removed from this set, if present.
+         * @return {@code true} if the set contained the specified element.
+         * @throws NullPointerException - if the specified element is null.
+         */
+        @Override
+        public boolean remove(Object o)
+        {
+            if (o == null)
+                throw new NullPointerException();
+
+            return map.remove(o) != null;
+        }        
+    }
+
+    private class ValueSet extends EntrySet
+    {
+        /**
+         * Returns {@code true} if this set contains the specified element.
+         * 
+         * @param o - element whose presence in this set is to be tested.
+         * @return {@code true} if this set contains the specified element.
+         * @throws NullPointerException - if the specified element is null.
+         */
+        @Override
+        public boolean contains(Object o)
+        {
+            if (o == null)
+                throw new NullPointerException();
+
+            return map.contains(o);
+        }
+
+        /**
+         * Returns an iterator over the elements in this set.
+         * 
+         * @return an iterator over the elements in this set.
+         */
+        @Override
+        public HIterator iterator()
+        {
+            // TODO Auto-generated method stub
+            return super.iterator();
+        }
+
+        /**
+         * Removes the specified element from this set if it is present.
+         * Returns {@code true} if the set contained the specified element.
+         * The set and the map it is backed by will not contain the specified element once the call returns.
+         * 
+         * @param o - object to be removed from this set, if present.
+         * @return {@code true} if the set contained the specified element.
+         * @throws NullPointerException - if the specified element is null.
+         */
+        @Override
+        public boolean remove(Object o)
+        {
+            if (o == null)
+                throw new NullPointerException();
+
+            HIterator i = super.iterator();
+            while (i.hasNext())
+            {
+                if (((Entry)i.next()).getValue() == o)
+                {   
+                    i.remove();
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
