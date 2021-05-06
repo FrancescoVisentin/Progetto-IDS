@@ -74,7 +74,7 @@ public class ListAdapter implements HList
         modCount++;
 
         //Se sono una sublist correggo il limite superiore.
-        if(to != -1) to++;
+        if (to != -1) to++;
     }
 
     /**
@@ -150,13 +150,15 @@ public class ListAdapter implements HList
     @Override
     public void clear()
     {
-        if(to != -1)
+        if (size() >= 0)
+            modCount++;
+
+        if (to != -1)
             while(to > from)
                 vec.removeElementAt(--to);
         else
             vec.removeAllElements();
         
-        modCount++;
     }
 
     /**
@@ -220,7 +222,8 @@ public class ListAdapter implements HList
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || !(o instanceof ListAdapter)) return false;
+        if (o == null || !(o instanceof ListAdapter))
+            return false;
 
         ListAdapter l = (ListAdapter)o;
         if (size() != l.size()) return false;
@@ -531,7 +534,7 @@ public class ListAdapter implements HList
     public int size()
     {
         //Sono una sublist
-        if(to != -1)
+        if (to != -1)
             return to - from;
         
         return vec.size();
@@ -596,6 +599,8 @@ public class ListAdapter implements HList
      *          is created for this purpose.
      * @return  an array containing the elements of this list.
      * @throws  NullPointerException if the specified array is {@code null}.
+     * @throws  ArrayStoreException - if the runtime type of the specified array
+     *          is not a supertype of the runtime type of every element in this list.
      */
     @Override
     public Object[] toArray(Object[] a)
@@ -606,6 +611,7 @@ public class ListAdapter implements HList
         if (a.length < size())
             return toArray();
         
+        //Può generare ArrayStoreException
         for (int i = 0; i < size(); i++)
             a[i] = get(i);
         
