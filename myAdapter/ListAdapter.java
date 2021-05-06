@@ -8,7 +8,7 @@ public class ListAdapter implements HList
     //Il vettore usato come adaptee per l'adapter.
     private Vector vec;
 
-    //Variabile usata dagli iteratori per verificare se la lista vine modificata
+    //Variabile usata dagli iteratori per verificare se la lista vine modificata strutturalmente
     //durante il processo di iterazione.
     int modCount = 0;
 
@@ -351,14 +351,10 @@ public class ListAdapter implements HList
         if(size() <= 0)
             return -1;
 
-        if (to != -1)
-        {
-            int i = vec.lastIndexOf(o, to-1);
-            if (i >= from)
-                return i - from;
-            return -1;
-        }
-        return vec.lastIndexOf(o);
+        int i = vec.lastIndexOf(o, size() + from -1);
+        if (i >= from)
+            return i - from;
+        return -1;
     }
 
     /**
@@ -412,6 +408,7 @@ public class ListAdapter implements HList
         vec.removeElementAt(index + from);
         
         if (to != -1) to--;
+        modCount++;
 
         return ret;
     }
@@ -437,6 +434,7 @@ public class ListAdapter implements HList
         {
             vec.removeElementAt(i + from);
             if (to != -1) to--;
+            modCount++;
 
             return true;
         }
@@ -492,7 +490,13 @@ public class ListAdapter implements HList
             if (!c.contains(o)) iter.remove();
         }    
         
-        return size != size();
+        if (size != size())
+        {
+            modCount++;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -565,7 +569,7 @@ public class ListAdapter implements HList
         if (fromIndex < 0 || toIndex > size() || fromIndex > toIndex)
             throw new IndexOutOfBoundsException();
 
-        return new ListAdapter(vec, fromIndex, toIndex);
+        return new ListAdapter(vec, fromIndex + from, toIndex + from);
     }
 
     /**
