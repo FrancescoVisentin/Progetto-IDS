@@ -4,13 +4,25 @@ import myLib.Hashtable;
 import myLib.Enumeration;
 import java.util.NoSuchElementException;
 
+
+/**
+ * The class MapAdapter implements myAdaper.HMap, which maps keys to values.
+ * 
+ * This class use an HashTable to store its elements.
+ * Any non-{@code null} can be used as a key or value.
+ * 
+ * To successfully store and retrive objects from the MapAdapter,
+ * the object used as key must implements the {@code hascode} method and the {@code equals} method.
+ */
 public class MapAdapter implements HMap
 {
-    //HasTable usata come adaptee per l'adapter.
+    /**
+     *  Hastable used as an adaptee for this adapter.
+     */
     private Hashtable map;
 
     /**
-     * Constructs a new, empty map.
+     * Constructs a new, empty MapAdapter.
      */
     public MapAdapter()
     {
@@ -18,7 +30,22 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Removes all mappings from this map.
+     * Constructs a new, empty MapAdapter containing all the elements of the specifec HMap.
+     * 
+     * @param m - the HMap whose elements are to be placed into this list.
+     * @throws NullPointerException - if the specified collection is null.
+     */
+    public MapAdapter(HMap m)
+    {
+        if (m == null)
+            throw new NullPointerException();
+        
+        map = new myLib.Hashtable();
+        putAll(m);
+    }
+
+    /**
+     * Removes all mappings from this MapAdapter.
      */
     @Override
     public void clear()
@@ -27,13 +54,14 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns true if this map contains a mapping for the specified key.
-     * More formally, returns true if and only if this map contains a mapping for a key k
-     * such that {@code (key==null ? k==null : key.equals(k))}. (There can be at most one such mapping.)
-
+     * Returns true if this MapAdapter contains a mapping for the specified key.
      * 
-     * @param key - The key whose presence in this map is to be tested
-     * @return {@code true} if this map contains a mapping for the specified key.
+     * More formally, returns true if and only if this MapAdapter contains one mapping to a key k
+     * such that {@code key.equals(k)}.
+     * There can be at most one such mapping.
+     * 
+     * @param key - The key whose presence in this MapAdapter is to be tested
+     * @return {@code true} if this MapAdapter contains a mapping for the specified key.
      * @throws NullPointerException - if the key is null.
      */
     @Override
@@ -46,12 +74,13 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns true if this map maps one or more keys to the specified value.
-     * More formally, returns true if and only if this map contains at least one mapping to a value v
-     * such that {@code (key==null ? v==null : value.equals(v))}.
+     * Returns true if this MapAdapter maps one or more keys to the specified value.
      * 
-     * @param value - value whose presence in this map is to be tested.
-     * @return {@code true} if this map maps one or more keys to the specified value.
+     * More formally, returns true if and only if this MapAdapter contains at least one mapping to a value v
+     * such that {@code value.equals(v)}.
+     * 
+     * @param value - value whose presence in this MapAdapter is to be tested.
+     * @return {@code true} if this MapAdapter maps one or more keys to the specified value.
      * @throws NullPointerException - if the value is null.
      */
     @Override
@@ -64,17 +93,19 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns a set view of the mappings contained in this map.
+     * Returns a set view of the mappings contained in this MapAdapter.
      * 
-     * Each element in the returned set is a {@code Map.Entry}.
-     * The set is backed by the map, so changes to the map are reflected in the set, and vice-versa.
-     * If the map is modified while an iteration over the set is in progress,
-     * the results of the iteration are undefined. The set supports element removal,
-     * which removes the corresponding mapping from the map,
-     * via the {@code Iterator.remove, Set.remove, removeAll, retainAll} and clear operations.
-     * It does not support the add or addAll operations
+     * Each element in the returned set is a {@code HMap.Entry}.
      * 
-     * @return a set view of the mappings contained in this map.
+     * The set is backed by the MapAdapter, so changes to the MapAdapter are reflected in the set, and vice-versa.
+     * If the MapAdapter is modified while an iteration over the set is in progress,
+     * the results of the iteration are undefined.
+     * 
+     * The set supports element removal, which removes the corresponding mapping from the MapAdapter,
+     * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
+     * 
+     * @return a set view of the mappings contained in this MapAdapter.
      */
     @Override
     public HSet entrySet()
@@ -83,13 +114,13 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Compares the specified object with this map for equality.
-     * Returns true if the given object is also a MapAdapter and the two Maps represent the same mappings.
-     * More formally, two maps t1 and t2 represent the same mappings if t1.entrySet().equals(t2.entrySet()).
-     * This ensures that the equals method works properly across different implementations of the Map interface.
+     * Compares the specified object with this MapAdapter for equality.
      * 
-     * @param o - object to be compared for equality with this map.
-     * @return {@code true} if the specified object is equal to this map.
+     * Returns true if the given object is also a MapAdapter and the two maps represent the same mappings.
+     * More formally, two MapAdapter t1 and t2 represent the same mappings if t1.entrySet().equals(t2.entrySet()).
+     * 
+     * @param o - object to be compared for equality with this MapAdapter.
+     * @return {@code true} if the specified object is equal to this MapAdapter.
      */
     @Override
     public boolean equals(Object o)
@@ -103,12 +134,13 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns the value to which this map maps the specified key.
-     * Returns null if the map contains no mapping for this key.
+     * Returns the value to which this MapAdapter maps the specified key.
+     * 
+     * Returns null if the MapAdapter contains no mapping for this key.
      * 
      * @param key - the key whose associated value is to be returned.
-     * @return the value to which this map maps the specified key,
-     *         or null if the map contains no mapping for this key.
+     * @return the value to which this MapAdapter maps the specified key,
+     *         or null if the MapAdapter contains no mapping for this key.
      * @throws NullPointerException - if the key is null.
      */
     @Override
@@ -121,11 +153,13 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns the hash code value for this map.
-     * The hash code of a map is defined to be the sum of the hashCodes of each entry in the map's entrySet view.
-     * This ensures that t1.equals(t2) implies that t1.hashCode()==t2.hashCode() for any two maps t1 and t2.
+     * Returns the hash code value for this MapAdapter.
      * 
-     * @return the hash code value for this map.
+     * The hash code of a MapAdapter is defined to be the sum of the hashCodes of each entry
+     * in the MapAdapter's entrySet view. This ensures that t1.equals(t2) implies
+     * that t1.hashCode()==t2.hashCode() for any two MapAdapter t1 and t2.
+     * 
+     * @return the hash code value for this MapAdapter.
      */
     @Override
     public int hashCode() 
@@ -142,9 +176,9 @@ public class MapAdapter implements HMap
 
 
     /**
-     * Returns {@code true} if this map contains no key-value mappings.
+     * Returns {@code true} if this MapAdapter contains no key-value mappings.
      * 
-     * @return {@code true} if this map contains no key-value mappings.
+     * @return {@code true} if this MapAdapter contains no key-value mappings.
      */
     @Override
     public boolean isEmpty()
@@ -153,16 +187,17 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns a set view of the keys contained in this map.
+     * Returns a set view of the keys contained in this MapAdapter.
      * 
-     * The set is backed by the map, so changes to the map are reflected in the set, and vice-versa.
-     * If the map is modified while an iteration over the set is in progress, 
-     * the results of the iteration are undefined. The set supports element removal,
-     * which removes the corresponding mapping from the map,
-     * via the {@code Iterator.remove, Set.remove, removeAll retainAll}, and clear operations.
-     * It does not support the add or addAll operations.
+     * The set is backed by the MapAdapter, so changes to the MapAdapter are reflected in the set, and vice-versa.
+     * If the MapAdapter is modified while an iteration over the set is in progress,
+     * the results of the iteration are undefined.
      * 
-     * @return a set view of the keys contained in this map.
+     * The set supports element removal, which removes the corresponding mapping from the MapAdapter,
+     * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
+     * 
+     * @return a set view of the keys contained in this MapAdapter.
      */
     @Override
     public HSet keySet()
@@ -171,10 +206,13 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Associates the specified value with the specified key in this map.
-     * If the map previously contained a mapping for this key, the old value is replaced by the specified value.
-     * (A map m is said to contain a mapping for a key k if and only if m.containsKey(k) would return true.))
+     * Associates the specified value with the specified key in this MapAdapter.
      * 
+     * If the MapAdapter previously contained a mapping for this key, the old value
+     * is replaced by the specified value.
+     * 
+     * @param key - key with which the specified value is to be associated.
+     * @param value - value to be associated with the specified key.
      * @return previous value associated with specified key, or null if there was no mapping for key.
      * @throws NullPointerException - if the specified key or value is null.
      */
@@ -188,13 +226,15 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Copies all of the mappings from the specified map to this map.
-     * The effect of this call is equivalent to that of calling put(k, v) on this map once
+     * Copies all of the mappings from the specified map to this MapAdapter.
+     * 
+     * The effect of this call is equivalent to that of calling put(k, v) on this MapAdapter once
      * for each mapping from key k to value v in the specified map.
+     * 
      * The behavior of this operation is unspecified if the specified map is modified
      * while the operation is in progress.
      * 
-     * @param t - Mappings to be stored in this map.
+     * @param t - Mappings to be stored in this MapAdapter.
      * @throws NullPointerException - the specified map is null,
      *         or the specified map contains null keys or values.
      */
@@ -214,12 +254,14 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Removes the mapping for this key from this map if it is present.
-     * Returns the value to which the map previously associated the key,
-     * or null if the map contained no mapping for this key.
-     * The map will not contain a mapping for the specified key once the call returns.
+     * Removes the mapping for this key from this MapAdapter if it is present.
      * 
-     * @param key - key whose mapping is to be removed from the map.
+     * Returns the value to which the MapAdapter previously associated the key,
+     * or null if the MapAdapter contained no mapping for this key.
+     * 
+     * The MapAdapter will not contain a mapping for the specified key once the call returns.
+     * 
+     * @param key - key whose mapping is to be removed from the MapAdapter.
      * @return previous value associated with specified key, or null if there was no mapping for key.
      * @throws NullPointerException - if the specified key is null.
      */
@@ -233,9 +275,9 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns the number of key-value mappings in this map.
+     * Returns the number of key-value mappings in this MapAdapter.
      *
-     * @return the number of key-value mappings in this map.
+     * @return the number of key-value mappings in this MapAdapter.
      */
     @Override
     public int size()
@@ -244,15 +286,17 @@ public class MapAdapter implements HMap
     }
 
     /**
-     * Returns a collection view of the values contained in this map.
+     * Returns a collection view of the values contained in this MapAdapter.
      * 
      * The collection is backed by the map, so changes to the map are reflected in the collection, and vice-versa.
      * If the map is modified while an iteration over the collection is in progress,
-     * the results of the iteration are undefined. The collection supports element removal,
-     * which removes the corresponding mapping from the map, via the {@code Iterator.remove, Collection.remove,
-     * removeAll, retainAll, clear} operations. It does not support the add or addAll operations.
+     * the results of the iteration are undefined.
      * 
-     * @return a collection view of the values contained in this map.
+     * The collection supports element removal, which removes the corresponding mapping from the MapAdapter,
+     * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
+     * 
+     * @return a collection view of the values contained in this MapAdapter.
      */
     @Override
     public HCollection values()
@@ -260,8 +304,12 @@ public class MapAdapter implements HMap
         return new ValueSet();
     }
 
-    //Classi private di supporto
+    //Classi private di supporto:
 
+    /**
+     * This class offers a standard HMap.Entry implementation.
+     * It is used to generate the objects used by EntrySet ad EntryIterator.
+     */
     private class HEntry implements HMap.Entry
     {
         Object val;
@@ -330,20 +378,33 @@ public class MapAdapter implements HMap
          * 
          * @param value - new value to be stored in this entry.
          * @return old value corresponding to the entry.
+         * @throws NullPointerException - if the specified value is null.
          */
         @Override
         public Object setValue(Object o)
         {
-            Object ret = val;
+            if (o == null)
+                throw new NullPointerException();
+            
             val = o;
-            return ret;
+            return map.put(key, val);
         }
     }
 
+    /**
+     * This class implements the HSet returned by the entrySet method.
+     * It uses the same HashTable used by the MapAdapter base class so that any operations
+     * in this class is backed in the base class ad vice-versa.
+     * 
+     * It does not support the {@code add}, {@code addAll} methods as requested by the HMap interface.
+     * 
+     * This class is extended by KeySet and ValueSet. Most of its methods are written to work
+     * indifferently in all three classes by using their overridden iterator.
+     */
     private class EntrySet implements HSet
     {
         /**
-         * Unsupported Operation
+         * Unsupported Operation.
          */
         @Override
         public boolean add(Object o)
@@ -352,7 +413,7 @@ public class MapAdapter implements HMap
         }
 
         /**
-         * Unsupported Operation
+         * Unsupported Operation.
          */
         @Override
         public boolean addAll(HCollection c)
@@ -362,7 +423,7 @@ public class MapAdapter implements HMap
 
         /**
          * Removes all of the elements from this set.
-         * This set and the map it is backed by will be empty after this call returns.
+         * This set and the MapAdapter it is backed by will be empty after this call returns.
          */
         @Override
         public void clear()
@@ -393,7 +454,6 @@ public class MapAdapter implements HMap
 
         /**
          * Returns {@code true} if this set contains all of the elements of the specified collection.
-         * If the specified collection is also a set, this method returns {@code true} if it is a subset of this set.
          * 
          * @param c - collection to be checked for containment in this set.
          * @return {@code true} if this set contains all of the elements of the specified collection.
@@ -415,6 +475,7 @@ public class MapAdapter implements HMap
 
         /**
          * Compares the specified object with this set for equality.
+         * 
          * Returns true if the specified object is also a set, the two sets have the same size,
          * and every member of the specified set is contained in this set.
          * 
@@ -435,6 +496,7 @@ public class MapAdapter implements HMap
 
         /**
          * Returns the hash code value for this set.
+         * 
          * The hash code of a set is defined to be the sum of the hash codes of the elements in the set.
          * This ensures that {@code s1.equals(s2)} implies that {@code s1.hashCode()==s2.hashCode()}
          * for any two sets s1 and s2.
@@ -476,6 +538,7 @@ public class MapAdapter implements HMap
 
         /**
          * Removes the specified element from this set if it is present.
+         * 
          * Returns {@code true} if the set contained the specified element.
          * The set and the map it is backed by will not contain the specified element once the call returns.
          * 
@@ -524,6 +587,7 @@ public class MapAdapter implements HMap
 
         /**
          * Retains only the elements in this set that are contained in the specified collection.
+         * 
          * In other words, removes from this set all of its elements that are not contained in the specified collection.
          * 
          * @param c - collection that defines which elements this set will retain.
@@ -604,6 +668,10 @@ public class MapAdapter implements HMap
         }
     }
 
+    /**
+     * This class extends the EntrySet representation.
+     * It is used by the keySet method. 
+     */
     private class KeySet extends EntrySet
     {
         /**
@@ -635,6 +703,7 @@ public class MapAdapter implements HMap
 
         /**
          * Removes the specified element from this set if it is present.
+         * 
          * Returns {@code true} if the set contained the specified element.
          * The set and the map it is backed by will not contain the specified element once the call returns.
          * 
@@ -652,6 +721,10 @@ public class MapAdapter implements HMap
         }        
     }
 
+    /**
+     * This class extends the EntrySet representation.
+     * It is used by the values method and returned as an HCollection implementation.
+     */
     private class ValueSet extends EntrySet
     {
         /**
@@ -710,12 +783,18 @@ public class MapAdapter implements HMap
         }
     }
 
+    /**
+     * An Iterator that returns mappings contained in this MapAdapter as required by EntrySet.
+     */
     private class EntryIterator implements HIterator
     {
         Enumeration enumm;
         boolean removable;
         Object lastNext;
 
+        /**
+         * Constructs a new EntryIterator
+         */
         public EntryIterator()
         {
             enumm = map.keys();
@@ -754,7 +833,9 @@ public class MapAdapter implements HMap
 
         /**
          * Removes from the underlying collection the last element returned by the iterator.
+         * 
          * This method can be called only once per call to next.
+         * 
          * The behavior of an iterator is unspecified if the underlying collection is modified
          * while the iteration is in progress in any way other than by calling this method.
          * 
@@ -772,17 +853,21 @@ public class MapAdapter implements HMap
         }
     }
 
+    /**
+     * This class extends the EntryIterator and it can be used either to represent a
+     * KeyIterator (as required by KeySet) or a ValueIterator (as required by ValueSet).
+     * 
+     * The KeyValIterator will return keys if its boolean field {@key} is set to true,
+     * otherwise it will return values.
+     */
     private class KeyValIterator extends EntryIterator
     {
-        //Variabile usata per determinare il comportamento dell'iteratore.
-        //Se key == true l'iteratore restituisce chiavi (Come richiesto dall'iteratore di KeySet).
-        //Se key == false l'iteratore restituisce valori (Come richiesto dall'iteratore di ValueSet).
         boolean key;
 
         /**
          * Constructs a new KeyValIterator.
          * 
-         * @param k - the param
+         * @param k - parameter that define the behaviour of the Iterator.
          */
         public KeyValIterator(boolean k)
         {
