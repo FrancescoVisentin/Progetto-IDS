@@ -2,6 +2,7 @@ package myAdapter;
 
 import myLib.Hashtable;
 import myLib.Enumeration;
+import java.util.NoSuchElementException;
 
 public class MapAdapter implements HMap
 {
@@ -244,11 +245,14 @@ public class MapAdapter implements HMap
 
     /**
      * Returns a collection view of the values contained in this map.
+     * 
      * The collection is backed by the map, so changes to the map are reflected in the collection, and vice-versa.
      * If the map is modified while an iteration over the collection is in progress,
      * the results of the iteration are undefined. The collection supports element removal,
      * which removes the corresponding mapping from the map, via the {@code Iterator.remove, Collection.remove,
      * removeAll, retainAll, clear} operations. It does not support the add or addAll operations.
+     * 
+     * @return a collection view of the values contained in this map.
      */
     @Override
     public HCollection values()
@@ -467,8 +471,7 @@ public class MapAdapter implements HMap
         @Override
         public HIterator iterator()
         {
-            // TODO Auto-generated method stub
-            return null;
+            return new EntryIterator();
         }
 
         /**
@@ -627,8 +630,7 @@ public class MapAdapter implements HMap
         @Override
         public HIterator iterator()
         {
-            // TODO Auto-generated method stub
-            return super.iterator();
+            return new KeyValIterator(true);
         }
 
         /**
@@ -676,8 +678,7 @@ public class MapAdapter implements HMap
         @Override
         public HIterator iterator()
         {
-            // TODO Auto-generated method stub
-            return super.iterator();
+            return new KeyValIterator(false);
         }
 
         /**
@@ -698,7 +699,7 @@ public class MapAdapter implements HMap
             HIterator i = super.iterator();
             while (i.hasNext())
             {
-                if (((Entry)i.next()).getValue() == o)
+                if (((Entry)i.next()).getValue().equals(o))
                 {   
                     i.remove();
                     return true;
@@ -706,6 +707,105 @@ public class MapAdapter implements HMap
             }
 
             return false;
+        }
+    }
+
+    private class EntryIterator implements HIterator
+    {
+        Enumeration enumm;
+        boolean removable;
+        Object lastNext;
+
+        public EntryIterator()
+        {
+            enumm = map.keys();
+            removable = false;
+            lastNext = null;
+        }
+
+        /**
+         * Returns {@code true} if the iteration has more elements.
+         * 
+         * @return {@code true} if the iteration has more elements.
+         */
+        @Override
+        public boolean hasNext()
+        {
+            return enumm.hasMoreElements();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         * 
+         * @return the next element in the iteration.
+         * @throws NoSuchElementException - iteration has no more elements.
+         */
+        @Override
+        public Object next()
+        {
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            lastNext = enumm.nextElement();
+            removable = true;
+        
+            return new HEntry(lastNext, map.get(lastNext));
+        }
+
+        /**
+         * Removes from the underlying collection the last element returned by the iterator.
+         * This method can be called only once per call to next.
+         * The behavior of an iterator is unspecified if the underlying collection is modified
+         * while the iteration is in progress in any way other than by calling this method.
+         * 
+         * @throws IllegalStateException  - if the next method has not yet been called,
+         *         or the remove method has already been called after the last call to the next method.
+         */
+        @Override
+        public void remove()
+        {
+            if (!removable)
+                throw new IllegalStateException();   
+
+            removable = false;            
+            map.remove(lastNext);
+        }
+    }
+
+    private class KeyValIterator extends EntryIterator
+    {
+        //Variabile usata per determinare il comportamento dell'iteratore.
+        //Se key == true l'iteratore restituisce chiavi (Come richiesto dall'iteratore di KeySet).
+        //Se key == false l'iteratore restituisce valori (Come richiesto dall'iteratore di ValueSet).
+        boolean key;
+
+        /**
+         * Constructs a new KeyValIterator.
+         * 
+         * @param k - the param
+         */
+        public KeyValIterator(boolean k)
+        {
+            super();
+            key = k;
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         * 
+         * @return the next element in the iteration.
+         * @throws NoSuchElementException - iteration has no more elements.
+         */
+        @Override
+        public Object next()
+        {
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            lastNext = enumm.nextElement();
+            removable = true;
+        
+            return key ? lastNext : map.get(lastNext);
         }
     }
 }
