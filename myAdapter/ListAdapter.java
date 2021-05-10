@@ -54,9 +54,11 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Inserts the specified element at the specified position in this list.
+     * Inserts the specified element at the specified position in this ListAdapter.
      * Shifts the element currently at that position (if any) and any subsequent elements to the
      * right (adds one to their indices).
+     *
+     * This ListAdapter will refuse the insertion of null objects.
      *
      * @param   index index at which the specified element is to be inserted.
      * @param   element element to be inserted.
@@ -78,12 +80,12 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Appends the specified element to the end of this list.
+     * Appends the specified element to the end of this ListAdapter.
      *
-     * This list will refute the insertion of null objects.
+     * This ListAdapter will refuse the insertion of null objects.
      *
-     * @param   o element to be appended to this list.
-     * @return  {@code true} (as specified by {@link HCollection#add}).
+     * @param   o element to be appended to this ListAdapter.
+     * @return  {@code true} if the operation was successful.
      * @throws  NullPointerException if the specified element is null.
      */
     @Override
@@ -94,14 +96,14 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Appends all of the elements in the specified collection to the end of this list,
+     * Appends all of the elements in the specified collection to the end of this ListAdapter,
      * in the order that they are returned by the specified collection's iterator.
      * The behavior of this operation is unspecified if the specified collection is modified
      * while the operation is in progress. (Note that this will occur if the specified collection is
      * this list, and it's nonempty.)
      *
-     * @param   c collection whose elements are to be added to this list.
-     * @return  {@code true} if this list changed as a result of the call.}
+     * @param   c collection whose elements are to be added to this ListAdapter.
+     * @return  {@code true} if this list changed as a result of the call.
      * @throws  NullPointerException if the specified collection is {@code null}
      *          or contains one or more null objects.
      */
@@ -112,15 +114,15 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Inserts all of the elements in the specified collection into this list at the specified position.
+     * Inserts all of the elements in the specified collection into this ListAdapter at the specified position.
      * Shifts the element currently at that position (if any) and any subsequent elements to the
-     * right (increases their indices). The new elements will appear in this list in the order
+     * right (increases their indices). The new elements will appear in this ListAdapter in the order
      * that they are returned by the specified collection's iterator. The behavior of this operation
      * is unspecified if the specified collection is modified while the operation is in progress.
      * (Note that this will occur if the specified collection is this list, and it's nonempty.)
      *
      * @param   index index at which to insert first element from the specified collection.
-     * @param   c elements to be inserted into this list.
+     * @param   c elements to be inserted into this ListAdapter.
      * @return  {@code true} if this list changed as a result of the call.
      * @throws  IndexOutOfBoundsException if the index is out of range {@code (index < 0 || index > size())}.
      * @throws  NullPointerException if the specified collection is {@code null}
@@ -135,6 +137,15 @@ public class ListAdapter implements HList
         if (c == null)
             throw new NullPointerException();
 
+        try
+        {
+            if (c.contains(null))
+                throw new NullPointerException();
+
+        }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                            //null come elemento. Quindi sicuramente non conterrà null
+                                            //ed è quindi una HCollection valida.
+
         int size = size();
         HIterator iter = c.iterator();
         while(iter.hasNext())
@@ -144,7 +155,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes all of the elements from this list.
+     * Removes all of the elements from this ListAdapter.
      * This list will be empty after this call returns.
      */
     @Override
@@ -162,9 +173,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns {@code true} if this list contains the specified element. More formally,
+     * Returns {@code true} if this ListAdapter contains the specified element. More formally,
      * returns {@code true} if and only if this list contains at least one element {@code e} such
-     * that {@code (o==null ? e==null : o.equals(e))}.
+     * that {@code o.equals(e)}.
      *
      * @param   o element whose presence in this list is to be tested.
      * @return  {@code true} if this list contains the specified element.
@@ -176,7 +187,7 @@ public class ListAdapter implements HList
         if (o == null)
             throw new NullPointerException();
         
-        if(size() <= 0)
+        if (size() <= 0)
             return false;
 
         //Caso per sublist.
@@ -201,6 +212,15 @@ public class ListAdapter implements HList
         if (c == null)
             throw new NullPointerException();
 
+        try
+        {
+            if (c.contains(null))
+                throw new NullPointerException();
+
+        }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                            //null come elemento. Quindi sicuramente non conterrà null
+                                            //ed è quindi una HCollection valida.
+
         HIterator iter = c.iterator();
         while(iter.hasNext())
             if (!contains(iter.next())) return false;
@@ -209,11 +229,11 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Compares the specified object with this list for equality. Returns {@code true} if
-     * and only if the specified object is also a list, both lists have the same size, and
+     * Compares the specified object with this ListAdapter for equality. Returns {@code true} if
+     * and only if the specified object is also a ListAdapter, both lists have the same size, and
      * all corresponding pairs of elements in the two lists are <i>equal</i>. (Two
-     * elements {@code e1} and {@code e2} are <i>equal</i> if {@code (e1==null ? e2==null :
-     * e1.equals(e2)).)} In other words, two lists are defined to be <i>equal</i>
+     * elements {@code e1} and {@code e2} are <i>equal</i> if {@code e1.equals(e2)}
+     * In other words, two lists are defined to be <i>equal</i>
      * if they contain the same elements in the same order.
      *
      * @param   o the object to be compared for equality with this list.
@@ -235,10 +255,10 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns the element at the specified position in this list.
+     * Returns the element at the specified position in this ListAdapter.
      *
      * @param   index index of element to return.
-     * @return  the element at the specified position in this list.
+     * @return  the element at the specified position in this ListAdapter.
      * @throws  IndexOutOfBoundsException if the index is out of range
      *          {@code (index < 0 || index >= size())}.
      */
@@ -252,7 +272,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns the hash code value for this list. The hash code of a list is defined to be the
+     * Returns the hash code value for this ListAdapter. The hash code of a list is defined to be the
      * result of the following calculation:
      *  {@code
      *   hashCode = 1;
@@ -283,13 +303,12 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns the index in this list of the first occurrence of the specified element,
+     * Returns the index in this ListAdapter of the first occurrence of the specified element,
      * or -1 if this list does not contain this element. More formally, returns the lowest
-     * index i such that {@code (o==null ? get(i)==null : o.equals(get(i)))},
-     * or -1 if there is no such index.
+     * index i such that {@code o.equals(get(i))}, or -1 if there is no such index.
      *
      * @param   o element to search for.
-     * @return  the index in this list of the first occurrence of the specified
+     * @return  the index in this ListAdapter of the first occurrence of the specified
      *          element, or -1 if this list does not contain this element.
      * @throws  NullPointerException if the specified element is null.
      */
@@ -314,9 +333,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns {@code true} if this list contains no elements.
+     * Returns {@code true} if this ListAdapter contains no elements.
      *
-     * @return  {@code true} if this list contains no elements.
+     * @return  {@code true} if this ListAdapter contains no elements.
      */
     @Override
     public boolean isEmpty()
@@ -325,9 +344,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns an iterator over the elements in this list in proper sequence.
+     * Returns an iterator over the elements in this ListAdapter in proper sequence.
      *
-     * @return  an iterator over the elements in this list in proper sequence.
+     * @return  an iterator over the elements in this ListAdapter in proper sequence.
      */
     @Override
     public HIterator iterator()
