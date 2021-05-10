@@ -29,9 +29,9 @@ public class TestRunner
     public static void main(String[] args)
     {
         //Test della classe ListAdapter
-        runTest(ListAdapterTester.class);
+        runTest(ListTester.class);
 
         //Test della classe MapAdapter
-        runTest(ListTester.class);
+        //runTest(ListTester.class);
     }
 }
