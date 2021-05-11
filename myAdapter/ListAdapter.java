@@ -355,9 +355,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns the index in this list of the last occurrence of the specified element,
+     * Returns the index in this ListAdapter of the last occurrence of the specified element,
      * or -1 if this list does not contain this element. More formally, returns the highest index
-     * i such that {@code (o==null ? get(i)==null : o.equals(get(i)))}, or -1 if there is no such index.
+     * i such that {@code o.equals(get(i))}, or -1 if there is no such index.
      *
      * @param   o element to search for.
      * @return  the index in this list of the last occurrence of the specified element,
@@ -370,7 +370,7 @@ public class ListAdapter implements HList
         if (o == null)
             throw new NullPointerException();
         
-        if(size() <= 0)
+        if (size() <= 0)
             return -1;
 
         int i = vec.lastIndexOf(o, size() + from -1);
@@ -380,9 +380,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns a list iterator of the elements in this list (in proper sequence).
+     * Returns a list iterator of the elements in this ListAdapter (in proper sequence).
      *
-     * @return a list iterator of the elements in this list (in proper sequence).
+     * @return a list iterator of the elements in this ListAdapter (in proper sequence).
      */
     @Override
     public HListIterator listIterator()
@@ -391,7 +391,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns a list iterator of the elements in this list (in proper sequence),
+     * Returns a list iterator of the elements in this ListAdapter (in proper sequence),
      * starting at the specified position in this list. The specified index indicates the
      * first element that would be returned by an initial call to the {@code next} method. An
      * initial call to the {@code previous} method would return the element with the specified
@@ -414,7 +414,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes the element at the specified position in this list. Shifts any
+     * Removes the element at the specified position in this ListAdapter. Shifts any
      * subsequent elements to the left (subtracts one from their indices). Returns
      * the element that was removed from the list.
      *
@@ -436,12 +436,12 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes the first occurrence in this list of the specified element. If this
+     * Removes the first occurrence in this ListAdapter of the specified element. If this
      * list does not contain the element, it is unchanged. More formally, removes
-     * the element with the lowest index i such that {@code (o==null ? get(i)==null : o.equals(get(i)))}
+     * the element with the lowest index i such that {@code o.equals(get(i))}
      * (if such an element exists).
      *
-     * @param   o element to be removed from this list, if present.
+     * @param   o element to be removed from this ListAdapter, if present.
      * @return  {@code true} if this list contained the specified element.
      * @throws  NullPointerException if the specified element is null.
      */
@@ -465,7 +465,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes from this list all the elements that are contained in the specified collection.
+     * Removes from this ListAdapter all the elements that are contained in the specified collection.
      *
      * @param   c collection that defines which elements will be removed from this list.
      * @return  {@code true} if this list changed as a result of the call.
@@ -479,6 +479,15 @@ public class ListAdapter implements HList
         if (c == null)
             throw new NullPointerException();
 
+        try
+        {
+            if (c.contains(null))
+                throw new NullPointerException();
+
+        }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                            //null come elemento. Quindi sicuramente non conterrà null
+                                            //ed è quindi una HCollection valida.
+
         int size = size();
         HIterator iter = c.iterator();
         while (iter.hasNext())
@@ -488,7 +497,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Retains only the elements in this list that are contained in the
+     * Retains only the elements in this ListAdapter that are contained in the
      * specified collection. In other words, removes from this list all
      * the elements that are not contained in the specified collection.
      *
@@ -504,6 +513,15 @@ public class ListAdapter implements HList
         if (c == null)
             throw new NullPointerException();
         
+        try
+        {
+            if (c.contains(null))
+                throw new NullPointerException();
+
+        }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                            //null come elemento. Quindi sicuramente non conterrà null
+                                            //ed è quindi una HCollection valida.
+
         int size = size();
         HIterator iter = iterator();
         while (iter.hasNext())
@@ -522,7 +540,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Replaces the element at the specified position in this list with
+     * Replaces the element at the specified position in this ListAdapter with
      * the specified element.
      *
      * @param   index index of element to replace.
@@ -545,9 +563,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns the number of elements in this list.
+     * Returns the number of elements in this ListAdapter.
      *
-     * @return the number of elements in this list.
+     * @return the number of elements in this ListAdapter.
      */
     @Override
     public int size()
@@ -560,22 +578,22 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns a view of the portion of this list between the specified {@code fromIndex},
+     * Returns a view of the portion of this ListAdapter between the specified {@code fromIndex},
      * inclusive, and {@code toIndex}, exclusive. (If {@code fromIndex} and {@code toIndex}
-     * are equal, the returned list is empty.) The returned list is backed by this list, so
+     * are equal, the returned list is empty.) The returned list is backed by this ListAdapter, so
      * non-structural changes in the returned list are reflected in this list, and vice-versa.
-     * The returned list supports all of the optional list operations supported by this list.
+     * The returned list supports all of the optional list operations supported by this ListAdapter.
      * This method eliminates the need for explicit range operations (of the sort that commonly
      * exist for arrays). Any operation that expects a list can be used as a range operation by passing
      * a subList view instead of a whole list. For example, the following idiom removes a range of
      * elements from a list:
      *
-     * 	    {@code list.subList(from, to).clear();}
+     * 	    {@code ListAdapter.subList(from, to).clear();}
      *
      * Similar idioms may be constructed for {@code indexOf} and {@code lastIndexOf}, and all
      * of the algorithms in the {@code Collections} class can be applied to a subList.
      * The semantics of the list returned by this method become undefined if the backing list
-     * (i.e., this list) is <i>structurally modified</i> in any way other than via the returned
+     * (i.e., this ListAdapter) is <i>structurally modified</i> in any way other than via the returned
      * list. (Structural modifications are those that change the size of this list, or otherwise
      * perturb it in such a fashion that iterations in progress may yield incorrect results.)
      *
@@ -595,9 +613,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns an array containing all of the elements in this list in proper sequence.
+     * Returns an array containing all of the elements in this ListAdapter in proper sequence.
      *
-     * @return an array containing all of the elements in this list in proper sequence.
+     * @return an array containing all of the elements in this ListAdapter in proper sequence.
      */
     @Override
     public Object[] toArray()
@@ -610,10 +628,10 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns an array containing all of the elements in this list in proper
+     * Returns an array containing all of the elements in this ListAdapter in proper
      * sequence; the runtime type of the returned array is that of the specified array.
      *
-     * @param   a the array into which the elements of this list are to be
+     * @param   a the array into which the elements of this ListAdapter are to be
      *          stored, if it is big enough; otherwise, a new {@code Object[]} array
      *          is created for this purpose.
      * @return  an array containing the elements of this list.
@@ -719,7 +737,7 @@ public class ListAdapter implements HList
             //In questo caso se la lista è stata modificata durante il processo di iterazione
             //lancio un eccezione piuttosto che avere undefined behavior.
             if (expectedModCount  != modCount)
-                throw new IllegalStateException("Underling list has been modified during the iteration");
+                throw new IllegalStateException("Underlying list has been modified during the iteration");
 
             if (!nextRemovable)
                 throw new IllegalStateException();
@@ -747,7 +765,7 @@ public class ListAdapter implements HList
          * the specified index.
          *
          * @param   vv the given Vector.
-         * @param   startindex the index the iteration will start from..
+         * @param   startindex the index the iteration will start from.
          */
         ListIter(myLib.Vector vv, int startIndex)
         {
@@ -778,7 +796,7 @@ public class ListAdapter implements HList
             //In questo caso se la lista è stata modificata durante il processo di iterazione
             //lancio un eccezione piuttosto che avere undefined behavior.
             if (expectedModCount  != modCount)
-                throw new IllegalStateException("Underling list has been modified during the iteration");
+                throw new IllegalStateException("Underlying list has been modified during the iteration");
 
             if (o == null)
                 throw new NullPointerException();
@@ -893,7 +911,7 @@ public class ListAdapter implements HList
             //In questo caso se la lista è stata modificata durante il processo di iterazione
             //lancio un eccezione piuttosto che avere undefined behavior.
             if (expectedModCount  != modCount)
-                throw new IllegalStateException("Underling list has been modified during the iteration");
+                throw new IllegalStateException("Underlying list has been modified during the iteration");
 
             if (!nextRemovable && !prevRemovable)
                 throw new IllegalStateException();
@@ -931,7 +949,7 @@ public class ListAdapter implements HList
             //In questo caso se la lista è stata modificata durante il processo di iterazione
             //lancio un eccezione piuttosto che avere undefined behavior.
             if (expectedModCount  != modCount)
-                throw new IllegalStateException("Underling list has been modified during the iteration");
+                throw new IllegalStateException("Underlying list has been modified during the iteration");
 
             if (!nextRemovable && !prevRemovable)
                 throw new IllegalStateException();

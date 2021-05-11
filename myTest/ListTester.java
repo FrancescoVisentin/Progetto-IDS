@@ -426,7 +426,7 @@ public class ListTester
      * Test del metodo hasNext() di Iter implements HIterator
      */
     @Test
-    public void IteratorHasNextTest()
+    public void iteratorHasNextTest()
     {
         assertTrue(list.isEmpty());
         HIterator it = list.iterator();
@@ -468,7 +468,7 @@ public class ListTester
      * Test del metodo remove() di Iter implements HIterator 
      */
     @Test
-    public void IteratorRemoveTest()
+    public void iteratorRemoveTest()
     {
         assertTrue(list.isEmpty());
 
@@ -490,7 +490,7 @@ public class ListTester
      * Test delle eccezioni del metodo remove() di Iter implements HIterator
      */
     @Test
-    public void IteratorRemoveExceptionsTest()
+    public void iteratorRemoveExceptionsTest()
     {
         HIterator it = list.iterator();
 
@@ -500,15 +500,640 @@ public class ListTester
         assertThrows(IllegalStateException.class, () -> {it.remove();});
 
         HIterator it2 = list.iterator();
+        assertThrows(IllegalStateException.class, () -> {it2.remove();});
         it2.next();
         it2.remove();
         assertThrows(IllegalStateException.class, () -> {it2.remove();});
     }
 
+    /**
+     * Test del metodo lastIndexOf()
+     */
+    @Test
+    public void lastIndexOfTest()
+    {
+        assertTrue(list.isEmpty());
 
+        list.addAll(makeCollection());
 
+        assertEquals(list.lastIndexOf(5), 4);
+        assertEquals(list.lastIndexOf("uno"), 0);
 
+        list.addAll(makeCollection());
+        assertEquals(list.lastIndexOf(5), 12);
+        assertEquals(list.lastIndexOf("uno"), 8);
 
+        assertEquals(list.lastIndexOf(""), -1);
+        list.clear();
+        assertEquals(list.lastIndexOf("uno"), -1);
+    }
+
+    /**
+     * Test delle eccezioni del metodo lastIndexOf()
+     */
+    @Test
+    public void lastIndexOfExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.lastIndexOf(null);});
+        assertEquals(list.size(), 0);
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.lastIndexOf(null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");  
+    }
+
+    /**
+     * Test delle eccezioni del metodo listIterator(int index) 
+     */
+    @Test
+    public void listIteratorExceptionsTest()
+    {
+        assertTrue(list.isEmpty());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.listIterator(1);});
+
+        list.add("");
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.listIterator(list.size()+1);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.listIterator(-1);});
+    }
+
+    /**
+     * Test del metodo add(Object o) di ListIter implements HListIterator
+     */
+    @Test
+    public void listIteratorAddTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HListIterator it = list.listIterator();
+        assertFalse(it.hasNext());
+        it.add("");
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0), "");
+        assertTrue(it.hasPrevious());
+        assertFalse(it.hasNext());
+
+        list.clear();
+        list.addAll(makeCollection());
+
+        it = list.listIterator(3);
+        it.add("cinque");
+        it.add("sei");
+        assertTrue(it.hasPrevious());
+        assertEquals(list.size(), 10);
+        assertEquals(list.get(3), "cinque");
+        assertEquals(list.get(4), "sei");
+        assertEquals(list.get(5), it.next());
+    }
+
+    /**
+     * Test delle eccezioni di add(Object o) di ListIter implements HListIterator
+     */
+    @Test
+    public void listIteratorAddExceptionsTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HListIterator it = list.listIterator();
+        assertThrows(NullPointerException.class, () -> {it.add(null);});
+        assertEquals(list.size(), 0);
+        
+        list.add("");
+        HListIterator it2 = list.listIterator();
+        assertThrows(IllegalStateException.class, () -> {it.add(null);});
+        assertThrows(NullPointerException.class, () -> {it2.add(null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");
+    }
+
+    /**
+     * Test del metodo hasPrevious() di ListIter implements HListIterator
+     */
+    @Test
+    public void listIteratorHasPreviousTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HListIterator it = list.listIterator();
+        assertFalse(it.hasNext());
+
+        list.addAll(makeCollection());
+        it = list.listIterator(list.size());
+        for(int i = list.size(); i > 0; i--)
+        {
+            assertTrue(it.hasPrevious());
+            it.previous();
+        }
+        assertFalse(it.hasPrevious());
+        assertTrue(it.hasNext());
+    }
+
+    /**
+     * Test del metodo next() di ListIter implements HListIterator
+     */
+    @Test
+    public void listIteratorNextTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HCollection c = makeCollection();
+        list.addAll(c);
+        HListIterator it = list.listIterator();
+
+        int size = list.size();
+        for (int i = 0; i < size; i++)
+        {
+            assertEquals(it.next(), list.get(i));
+        }
+
+        assertThrows(NoSuchElementException.class, () -> {it.next();});
+    }
+
+    /**
+     * Test del metodo nextIndex() di ListIter implements HListIterator 
+     */
+    @Test
+    public void listIteratorNextIndexTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HListIterator it = list.listIterator();
+        assertEquals(it.nextIndex(), 0);
+
+        list.addAll(makeCollection());
+        it = list.listIterator(3);
+
+        for (int i = 3; i < list.size(); i++)
+        {
+            assertEquals(it.nextIndex(), i);
+            assertEquals(list.get(i), it.next());
+        }
+
+        assertEquals(list.size(), it.nextIndex());
+    }
+
+    /**
+     * Test del metodo previous() di ListIter implements HListIterator 
+     */
+    @Test
+    public void listIteratorPreviousTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HCollection c = makeCollection();
+        list.addAll(c);
+        HListIterator it = list.listIterator(list.size());
+
+        for (int i = list.size()-1; i >= 0; i--)
+        {
+            assertEquals(it.previous(), list.get(i));
+        }
+
+        assertThrows(NoSuchElementException.class, () -> {it.previous();});
+    }
+
+    /**
+     * Test del metodo previousIndex() di ListIter implements HListIterator 
+     */
+    @Test
+    public void listIteratorPreviousIndexTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HListIterator it = list.listIterator(0);
+        assertEquals(it.previousIndex(), -1);
+
+        list.addAll(makeCollection());
+        it = list.listIterator(7);
+
+        for (int i = 6; i >= 0; i--)
+        {
+            assertEquals(it.previousIndex(), i);
+            assertEquals(list.get(i), it.previous());
+        }
+
+        assertEquals(-1, it.previousIndex());
+    }
+
+    /**
+     * Test del metodo remove() di ListIter implements HListIterator 
+     */
+    @Test
+    public void listIteratorRemoveTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HCollection c = makeCollection();
+        list.addAll(c);
+        HListIterator it = list.listIterator(4);
+
+        while (it.hasNext())
+        {
+            Object o = it.next();
+            it.remove();
+            assertFalse(list.contains(o));
+        }
+
+        while (it.hasPrevious())
+        {
+            Object o = it.previous();
+            it.remove();
+            assertFalse(list.contains(o));
+        }
+
+        assertEquals(list.size(), 0);
+
+        for (Object o : c.toArray())
+            it.add(o);
+
+        assertThrows(IllegalStateException.class, () -> {it.remove();});
+        it.previous();
+        it.remove();
+        assertThrows(IllegalStateException.class, () -> {it.remove();});
+
+        it.previous();
+        list.add("");
+        assertThrows(IllegalStateException.class, () -> {it.remove();});
+    }
+
+    /**
+     * Tes del metodo set(Object o) di ListIter implements HListIterator 
+     */
+    @Test
+    public void listIteratorSetTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HCollection c = makeCollection();
+        list.addAll(c);
+        HListIterator it = list.listIterator(4);
+
+        while (it.hasNext())
+        {
+            Object o = it.next();
+            it.set("next");
+            assertFalse(list.contains(o));
+            assertEquals(list.get(it.previousIndex()), "next");
+        }
+
+        while (list.get(it.previousIndex()).equals("next"))
+            it.previous();
+
+        while (it.hasPrevious())
+        {
+            Object o = it.previous();
+            it.set("prev");
+            assertFalse(list.contains(o));
+            assertEquals(list.get(it.nextIndex()), "prev");
+        }
+
+        assertEquals(list.size(), 8);
+
+        for (Object o : c.toArray())
+            it.add(o);
+
+        assertThrows(IllegalStateException.class, () -> {it.set("");});
+        assertThrows(IllegalStateException.class, () -> {it.set(null);});
+        it.previous();
+        assertThrows(NullPointerException.class, () -> {it.set(null);});
+
+        it.previous();
+        list.add("");
+        assertThrows(IllegalStateException.class, () -> {it.set("");});   
+    }
+
+    /**
+     * Test del metodo remove(int index)
+     */
+    @Test
+    public void removeIndexTest()
+    {
+        assertTrue(list.isEmpty());
+
+        list.addAll(makeCollection());
+
+        Object o = list.get(4);
+        Object r = list.remove(3);
+        assertFalse(list.contains(r));
+        assertEquals(list.get(3), o);
+        assertEquals(list.size(), 7);
+
+        while(!list.isEmpty())
+            assertFalse(list.contains(list.remove(list.size()-1)));
+
+        assertTrue(list.isEmpty());
+    }
+
+    /**
+     * Test delle eccezioni del metodo remove(int index) 
+     */
+    @Test
+    public void removeIndexExceptionsTest()
+    {
+        assertTrue(list.isEmpty());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.remove(1);});
+
+        list.add("");
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.remove(list.size());});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.remove(-1);});
+    }
+
+    /**
+     * Test del metodo remove(Object o)
+     */
+    @Test
+    public void removeObjectTest()
+    {
+        assertTrue(list.isEmpty());
+
+        HCollection c = makeCollection();
+        list.addAll(c);
+
+        for (Object o : c.toArray())
+        {
+            assertTrue(list.remove(o));
+            assertFalse(list.contains(o));
+        }
+
+        assertEquals(list.size(), 0);
+        assertFalse(list.remove(""));
+
+        list.add("uno");
+        list.add("due");
+        list.add("uno");
+
+        assertTrue(list.remove("uno"));
+        assertEquals(list.get(0), "due");
+        assertEquals(list.get(1), "uno");
+    }
+
+    /**
+     * Test delle eccezioni del metodo remove(Object o)
+     */
+    @Test
+    public void removeObjectExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.remove(null);});
+        assertEquals(list.size(), 0);
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.remove(null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");
+    }
+
+    /**
+     * Test del metodo removeAll(HCollection c)
+     */
+    @Test
+    public void removeAllTest()
+    {
+        assertTrue(list.isEmpty());
+        HCollection c = makeCollection();
+
+        assertFalse(list.removeAll(c));
+
+        list.addAll(c);
+        list.add(0, "zero");
+        list.add(4, "quattro");
+        list.add(8, "otto");
+        assertTrue(list.removeAll(c));
+        assertEquals(list.size() , 3);
+        assertEquals(list.get(0), "zero");
+        assertEquals(list.get(1), "quattro");
+        assertEquals(list.get(2), "otto");
+
+        c.add("zero");
+        c.add("quattro");
+        c.add("otto");
+        assertTrue(list.removeAll(c));
+        assertEquals(list.size() , 0);
+    }
+
+    /**
+     * Test delle eccezioni del metodo removeAll(HCollection c)
+     */
+    @Test
+    public void removeAllExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.removeAll(null);});
+        assertEquals(list.size(), 0);
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.removeAll(null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");
+    }
+
+    /**
+     * Test del metodo retainAll(HCollection c)
+     */
+    @Test
+    public void retainAllTest()
+    {
+        assertTrue(list.isEmpty());
+        HCollection c = makeCollection();
+
+        assertFalse(list.retainAll(c));
+
+        list.addAll(c);
+        list.add(0, "zero");
+        list.add(4, "quattro");
+        list.add(8, "otto");
+        assertTrue(list.retainAll(c));
+        assertEquals(list.size() , 9);
+        assertFalse(list.contains("zero"));
+        assertTrue(list.contains("quattro"));
+        assertFalse(list.contains("otto"));
+
+        c.clear();
+        assertTrue(list.retainAll(c));
+        assertEquals(list.size() , 0);
+    }
+
+    /**
+     * Test delle eccezioni del metodo retainAll(HCollection c)
+     */
+    @Test
+    public void retainAllExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.retainAll(null);});
+        assertEquals(list.size(), 0);
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.retainAll(null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");
+    }
+
+    /**
+     * Test del metodo set(int index, Object o)
+     */
+    @Test
+    public void setTest()
+    {
+        assertTrue(list.isEmpty());
+
+        list.addAll(makeCollection());
+
+        Object o = list.set(5, "a");
+        assertFalse(list.contains(o));
+        assertTrue(list.contains("a"));
+        assertEquals(list.size(), 8);
+
+        o = list.set(0, "b");
+        assertFalse(list.contains(o));
+        assertTrue(list.contains("b"));
+        assertEquals(list.size(), 8);
+
+        o = list.set(list.size()-1, "c");
+        assertFalse(list.contains(o));
+        assertTrue(list.contains("c"));
+        assertEquals(list.size(), 8);
+    }
+
+    /**
+     * Test delle eccezioni del metodo set(int index, Object o)
+     */
+    @Test
+    public void setExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.set(0, null);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.set(0, "");});
+        assertEquals(list.size(), 0);
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.set(0, null);});
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0),"");
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.set(list.size(), "");});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.set(-1, "");});
+    }
+
+    /**
+     * Test del metodo size()
+     */
+    @Test
+    public void sizeTest()
+    {
+        assertEquals(list.size(), 0);
+
+        list.add("");
+        assertEquals(list.size(), 1);
+
+        list.addAll(makeCollection());
+        assertEquals(list.size(), 9);
+
+        list.remove("");
+        assertEquals(list.size(), 8);
+
+        list.clear();
+        assertEquals(list.size(), 0);
+    }
+
+    /**
+     * Test del metodo sublist(int fromIndex, int toIndex)
+     */
+    @Test
+    public void sublistTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+
+        HList l = list.subList(0, list.size());
+        assertEquals(l.size(), list.size());
+
+        l = list.subList(3, 8);
+        assertEquals(l.size(), 5);
+
+        l = list.subList(2, 2);
+        assertEquals(l.size(), 0);
+    }
+
+    /**
+     * Test delle eccezioni del metodo sublist(int fromIndex, int toIndex)
+     */
+    @Test
+    public void sublistExceptionsTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.subList(-1,3);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.subList(0,10);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {list.subList(8,2);});
+
+        assertEquals(list.size(), 8);
+    }
+
+    /**
+     * Test del metodo toArray()
+     */
+    @Test
+    public void toArrayTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+
+        Object[] a = list.toArray();
+        assertEquals(list.size(), a.length);
+        for (int i = 0; i < a.length; i++)
+        {
+            assertEquals(a[i], list.get(i));
+        }
+    }
+
+    /**
+     * Test del metodo toArray(Object[] a)
+     */
+    @Test
+    public void toArrayObjectTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+
+        Object[] a = new Object[2];
+        assertNotEquals(list.size(), a.length);
+        a = list.toArray(a);
+        assertEquals(list.size(), a.length);
+        for (int i = 0; i < a.length; i++)
+        {
+            assertEquals(a[i], list.get(i));
+        }
+
+        Object[] o = new Object[15];
+        for (int i = 0; i < 15; i++)
+            o[i] = i;
+
+        assertNotEquals(list.size(), o.length);
+        o = list.toArray(o);
+        assertNotEquals(list.size(), o.length);
+        assertEquals(o.length, 15);
+        for (int i = 0; i < list.size(); i++)
+        {
+            assertEquals(o[i], list.get(i));
+        }
+
+        for (int i = list.size(); i < o.length; i++)
+        {
+            assertEquals(o[i], i);
+        }
+    }
+
+    /**
+     * Test delle eccezioni del metodo toArray(Object[] a)
+     */
+    @Test
+    public void toArrayObjectExceptionsTest()
+    {
+        assertThrows(NullPointerException.class, () -> {list.toArray(null);});
+        list.add("");
+        assertThrows(NullPointerException.class, () -> {list.toArray(null);});
+
+        Integer[] s = new Integer[10];
+        assertThrows(ArrayStoreException.class, () -> {list.toArray(s);});
+    
+        assertEquals(list.size(), 1);
+        assertEquals(list.get(0), "");
+    }
 
     //metodi di supporto 
     private HCollection makeCollection()
@@ -525,6 +1150,4 @@ public class ListTester
 
         return ret;
     }
-
 }
-
