@@ -22,7 +22,7 @@ public class TestRunner
         }
         else
         {
-            System.out.println("Tutti i test son stati eseguiti con successo.");
+            System.out.println("Tutti i test son stati eseguiti con successo.\n");
         }
     }
 
