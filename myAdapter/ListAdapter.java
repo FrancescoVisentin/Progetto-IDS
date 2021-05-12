@@ -3,6 +3,27 @@ package myAdapter;
 import myLib.Vector;
 import myLib.NoSuchElementException;
 
+/**
+ * The ListAdapter class implements the HList interface by using a Vector as
+ * an adaptee to store its elements.
+ * 
+ * Any type of object, except {@code null}, can stored inside a ListAdapter object
+ * however the corret behaviour of the class is not guaranteed if the stored elements
+ * does not implements the hashCode() and equals() method.
+ * 
+ * This class has been written to be used in two differents modes:
+ * 1) a "base list" mode: where the class can access all the elements stored in its underlying Vector.
+ *                        All the public constructors of this class create an object configured 
+ *                        to work in this mode.
+ * 2) a "sublist" mode: where the class il always linked to another instance of ListAdapter and it
+ *                      can only acces a range of elements of the Vector shared between the two classes.
+ *                      A ListAdapter congifured to work in this mode can only be obtained via the {@code subList} method.
+ * 
+ * To successfully implements this design choice some methods have been written to be able to work in a 
+ * different manner when used in in the first or in the second mode.
+ * 
+ * @author Francesco Visentin
+ */
 public class ListAdapter implements HList
 {
     //Il vettore usato come adaptee per l'adapter.

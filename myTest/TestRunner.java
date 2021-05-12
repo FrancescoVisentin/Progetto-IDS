@@ -29,7 +29,7 @@ public class TestRunner
     public static void main(String[] args)
     {
         //Test della classe ListAdapter
-        runTest(ListTester.class);
+        runTest(ListSuite.class);
 
         //Test della classe MapAdapter
         //runTest(ListTester.class);

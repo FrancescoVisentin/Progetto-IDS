@@ -7,15 +7,17 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 
-public class ListTester
+public class SubListTester
 {
     private ListAdapter list;
 
     @Before
     public void initialize()
     {
-        //Inizializza un oggetto ListAdapter di tipo "lista base" su cui effettura i test.
-        list = new ListAdapter();
+        //Inizializza un oggetto ListAdapter di tipo "sublist" su cui effettuare i test.
+        ListAdapter baseList = new ListAdapter();
+        baseList.addAll(makeCollection());
+        list = (ListAdapter)baseList.subList(5,5);
     }
 
     /**
