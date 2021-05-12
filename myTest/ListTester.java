@@ -14,7 +14,16 @@ public class ListTester
     @Before
     public void initialize()
     {
+        //Inizializza un oggetto ListAdapter di tipo "lista base" su cui effettura i test.
         list = new ListAdapter();
+        
+
+        //Inizializza un oggetto ListAdapter di tipo "baselist" su cui effettura i test.
+        /*
+        ListAdapter baseList = new ListAdapter();
+        baseList.addAll(makeCollection());
+        list = (ListAdapter)baseList.subList(5,5);
+        */
     }
 
     /**
@@ -44,7 +53,7 @@ public class ListTester
     }
 
     /**
-     * Test eccezioni del metodo add(Object o)
+     * Test eccezioni del metodo add(int index, Object o)
      */
     @Test
     public void addIndexExceptionsTest()
@@ -1133,6 +1142,312 @@ public class ListTester
     
         assertEquals(list.size(), 1);
         assertEquals(list.get(0), "");
+    }
+
+    /**
+     * Test del metodo add(int index, Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListAddIndexTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 6);
+
+        sub.add(0, "one");
+        assertEquals(sub.size(), 4);
+        assertEquals(list.size(), 9);
+        sub.add(0, "two");
+        sub.add(2, "three");
+        assertEquals(sub.size(), 6);
+        assertEquals(list.size(), 11);
+
+        assertEquals(sub.get(0), "two");
+        assertEquals(sub.get(1), "one");
+        assertEquals(sub.get(2), "three");
+
+        assertEquals(list.get(3), "two");
+        assertEquals(list.get(4), "one");
+        assertEquals(list.get(5), "three");
+    }
+
+    /**
+     * Test delle eccezioni del metodo add(int index, Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListAddIndexExceptionsTest()
+    {
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        assertThrows(NullPointerException.class, () -> {sub.add(0, null);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(1, "valido");});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(-42, "valido");});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(2, null);});
+        
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
+        sub.add(0, "");
+        
+        assertThrows(NullPointerException.class, () -> {sub.add(1, null);});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(2, "valido");});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(-42, "valido");});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.add(2, null);});
+        assertEquals(sub.size(), 1);
+        assertEquals(list.size(), 9);
+        assertEquals(sub.get(0),"");
+        assertEquals(list.get(3),"");
+    }
+
+    /**
+     * Test del metodo clear() in "modalità sublist"
+     */
+    @Test
+    public void subListClearTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 6);
+
+        sub.clear();
+        assertTrue(sub.isEmpty());
+        assertEquals(list.size(), 5);
+
+        HCollection c = makeCollection();
+        sub.addAll(c);
+
+        sub.clear();
+        assertTrue(sub.isEmpty());
+
+        HIterator it = c.iterator();
+        while(it.hasNext())    
+            assertFalse(sub.contains(it.next()));
+
+        assertEquals(list.size(), 5);
+    }
+
+    /**
+     * Test del metodo contains(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListContainsTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(4, 5);
+
+        assertFalse(sub.contains(""));
+
+        sub.add("uno");
+        assertTrue(sub.contains("uno"));
+        sub.add(0, "due");
+        sub.add(1, "tre");
+        assertTrue(sub.contains("uno"));
+        assertTrue(sub.contains("due"));
+        assertTrue(sub.contains("tre"));
+
+        assertEquals(list.size(), 11);
+        sub.clear();
+        assertEquals(list.size(), 7);
+
+        assertFalse(sub.contains("uno"));
+        assertFalse(sub.contains("due"));
+        assertFalse(sub.contains("tre"));
+
+        assertTrue(list.contains("uno"));
+        assertTrue(list.contains("due"));
+        assertTrue(list.contains("tre"));
+    }
+
+    /**
+     * Test delle eccezioni del metodo contains(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListContainsExceptionsTest()
+    {
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        assertThrows(NullPointerException.class, () -> {sub.contains(null);});
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
+        sub.add(0, "");
+        assertThrows(NullPointerException.class, () -> {sub.contains(null);});
+        assertEquals(sub.size(), 1);
+        assertEquals(list.size(), 9);
+        assertEquals(sub.get(0),"");
+        assertEquals(list.get(3),"");
+    }
+
+    /**
+     * Test del metodo indexOf(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListIndexOfTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        sub.addAll(makeCollection());
+        assertEquals(sub.indexOf("due"), 1);
+        assertEquals(sub.indexOf(6), 5);
+        assertEquals(list.indexOf("due"), 1);
+        assertEquals(list.indexOf(6), 8);
+        
+        sub.add(2,6);
+        assertEquals(sub.indexOf(6), 2);
+        assertEquals(sub.indexOf(""), -1);
+
+        sub.clear();
+        assertEquals(sub.indexOf(6), -1);
+        assertEquals(list.indexOf(6), 5);
+    }
+
+    /**
+     * Test delle eccezioni del metodo indexOf(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListIndexOfExceptionsTest()
+    {
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        assertThrows(NullPointerException.class, () -> {sub.indexOf(null);});
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
+        sub.add(0, "");
+        assertThrows(NullPointerException.class, () -> {sub.indexOf(null);});
+        assertEquals(sub.size(), 1);
+        assertEquals(list.size(), 9);
+        assertEquals(sub.get(0),"");
+        assertEquals(list.get(3),"");
+    }
+
+    /**
+     * Test del metodo remove(int index) in "modalità sublist"
+     */
+    @Test
+    public void subListRemoveIndexTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(2, 8);
+
+
+        Object o = sub.get(4);
+        Object r = sub.remove(3);
+        assertFalse(sub.contains(r));
+        assertFalse(list.contains(r));
+        assertEquals(sub.get(3), o);
+        assertEquals(sub.size(), 5);
+
+        while(!sub.isEmpty())
+            assertFalse(sub.contains(sub.remove(sub.size()-1)));
+
+        assertTrue(sub.isEmpty());
+        assertEquals(list.size(), 2);
+    }
+
+    /**
+     * Test delle eccezioni del metodo remove(int index) in "modalità sublist"
+     */
+    @Test
+    public void subListRemoveIndexExceptionsTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.remove(1);});
+
+        sub.add("");
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.remove(sub.size());});
+        assertThrows(IndexOutOfBoundsException.class, () -> {sub.remove(-1);});
+
+        assertEquals(sub.size(), 1);
+    }
+
+    /**
+     * Test del metodo remove(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListRemoveObjectTest()
+    {
+        assertTrue(list.isEmpty());
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        HCollection c = makeCollection();
+        sub.addAll(c);
+
+        for (Object o : c.toArray())
+        {
+            assertTrue(sub.remove(o));
+            assertFalse(sub.contains(o));
+        }
+
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
+        assertFalse(sub.remove(""));
+
+        sub.add("uno");
+        sub.add("due");
+        sub.add("uno");
+
+        assertTrue(sub.remove("uno"));
+        assertEquals(sub.get(0), "due");
+        assertEquals(sub.get(1), "uno");
+        assertEquals(list.size(), 10);
+    }
+
+    /**
+     * Test delle eccezioni del metodo remove(Object o) in "modalità sublist"
+     */
+    @Test
+    public void subListRemoveObjectExceptionsTest()
+    {
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+
+        assertThrows(NullPointerException.class, () -> {sub.remove(null);});
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
+        sub.add(0, "");
+        assertThrows(NullPointerException.class, () -> {sub.remove(null);});
+        assertEquals(sub.size(), 1);
+        assertEquals(list.size(), 9);
+        assertEquals(sub.get(0),"");
+        assertEquals(list.get(3),"");
+    }
+
+    /**
+     * Test del metodo size() in "modalità sublist"
+     */
+    @Test
+    public void subListSizeTest()
+    {
+        assertEquals(list.size(), 0);
+        list.addAll(makeCollection());
+        HList sub = list.subList(3, 3);
+        
+        assertEquals(sub.size(), 0);
+
+        sub.add("");
+        assertEquals(sub.size(), 1);
+        assertEquals(list.size(), 9);
+
+        sub.addAll(makeCollection());
+        assertEquals(sub.size(), 9);
+        assertEquals(list.size(), 17);
+
+        sub.remove("");
+        assertEquals(sub.size(), 8);
+        assertEquals(list.size(), 16);
+
+        sub.clear();
+        assertEquals(sub.size(), 0);
+        assertEquals(list.size(), 8);
     }
 
     //metodi di supporto 
