@@ -7,9 +7,9 @@ import myLib.NoSuchElementException;
  * The ListAdapter class implements the HList interface by using a Vector as
  * an adaptee to store its elements.
  * 
- * Any type of object, except {@code null}, can stored inside a ListAdapter object
+ * Any type of object, except {@code null}, can be stored inside a ListAdapter object
  * however the corret behaviour of the class is not guaranteed if the stored elements
- * does not implements the hashCode() and equals() method.
+ * does not implements the {@code hashCode} and {@code equals} method.
  * 
  * This class has been written to be used in two differents modes:
  * 1) a "base list" mode: where the class can access all the elements stored in its underlying Vector.
