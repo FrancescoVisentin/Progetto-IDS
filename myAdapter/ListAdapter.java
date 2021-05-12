@@ -10,18 +10,20 @@ public class ListAdapter implements HList
 
     //Variabile usata dagli iteratori per verificare se la lista vine modificata strutturalmente
     //durante il processo di iterazione.
-    int modCount = 0;
+    private int modCount = 0;
 
     //Valori usati per implementare sublist.
     //Vengono  modificati, e di conseguenza resi influenti, solo quando viene istanziato un
     //ListAdapter dal costruttore specifico per sublist.
-    int from = 0;
-    int to = -1;
+    private int from = 0;
+    private int to = -1;
+    private ListAdapter baseList = null;
 
     //Costruttore per sublist.
-    private ListAdapter(Vector v, int fromIndex, int toIndex)
+    private ListAdapter(ListAdapter b, int fromIndex, int toIndex)
     {
-        vec = v;
+        baseList = b;
+        vec = b.vec;
         from = fromIndex;
         to = toIndex;
     }
@@ -76,7 +78,8 @@ public class ListAdapter implements HList
         modCount++;
 
         //Se sono una sublist correggo il limite superiore.
-        if (to != -1) to++;
+        if (to != -1)
+            adjustOffset(false);
     }
 
     /**
@@ -166,7 +169,10 @@ public class ListAdapter implements HList
 
         if (to != -1)
             while(to > from)
-                vec.removeElementAt(--to);
+            {    
+                vec.removeElementAt(to-1);
+                adjustOffset(true);
+            }
         else
             vec.removeAllElements();
         
@@ -429,7 +435,9 @@ public class ListAdapter implements HList
         Object ret = get(index);
         vec.removeElementAt(index + from);
         
-        if (to != -1) to--;
+        if (to != -1)
+            adjustOffset(true);
+
         modCount++;
 
         return ret;
@@ -455,7 +463,9 @@ public class ListAdapter implements HList
         if (i >= 0)
         {
             vec.removeElementAt(i + from);
-            if (to != -1) to--;
+            if (to != -1)
+                adjustOffset(true);
+
             modCount++;
 
             return true;
@@ -609,7 +619,7 @@ public class ListAdapter implements HList
         if (fromIndex < 0 || toIndex > size() || fromIndex > toIndex)
             throw new IndexOutOfBoundsException();
 
-        return new ListAdapter(vec, fromIndex + from, toIndex + from);
+        return new ListAdapter(this, fromIndex + from, toIndex + from);
     }
 
     /**
@@ -746,7 +756,8 @@ public class ListAdapter implements HList
             vec.removeElementAt(--index);
 
             //Correggo il range per sublist.
-            if (to != -1) to--;
+            if (to != -1)
+                adjustOffset(true);
         }
         
     }
@@ -806,7 +817,8 @@ public class ListAdapter implements HList
             vec.insertElementAt(o, index++);
 
             //Correggo il range per sublist.
-            if (to != -1) to++;
+            if (to != -1)
+                adjustOffset(false);
         }
 
         /**
@@ -922,7 +934,8 @@ public class ListAdapter implements HList
                 vec.removeElementAt(index);
             
             //Correggo il range per sublist.
-            if (to != -1) to--;
+            if (to != -1)
+                adjustOffset(true);
             
             nextRemovable = false;
             prevRemovable = false;
@@ -961,6 +974,26 @@ public class ListAdapter implements HList
                 vec.setElementAt(o, index-1);
             else
                 vec.setElementAt(o, index);
+        }
+    }
+
+    //Metodo che corregge il range su cui una sublist può lavorare.
+    //Nel caso in cui la sublist fosse stata generata a partire da un'altra sublist
+    //tutti i range vengono mofificati adegutamente tramite la chiamata ricorsiva.
+    private void adjustOffset(boolean decrease)
+    {
+        if (baseList == null)
+            return;
+
+        if (decrease)
+        {
+            to--;
+            baseList.adjustOffset(true);
+        }
+        else
+        {
+            to++;
+            baseList.adjustOffset(false);
         }
     }
 }
