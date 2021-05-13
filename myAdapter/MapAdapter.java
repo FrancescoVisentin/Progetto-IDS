@@ -332,7 +332,10 @@ public class MapAdapter implements HMap
         @Override
         public boolean equals(Object o)
         {
-            HEntry e = (HEntry)o;
+            if (o == null || !(o instanceof HMap.Entry))
+                return false;
+
+            HMap.Entry e = (HMap.Entry)o;
             return getKey() == e.getKey() && getValue() == e.getValue();
         }
 
