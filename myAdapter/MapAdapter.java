@@ -586,6 +586,15 @@ public class MapAdapter implements HMap
             if (c == null)
                 throw new NullPointerException();
 
+            try
+            {
+                if (c.contains(null))
+                    throw new NullPointerException();
+    
+            }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                                //null come elemento. Quindi sicuramente non conterrà null
+                                                //ed è quindi una HCollection valida.
+
             int size = size();
             HIterator i = c.iterator();
             while (i.hasNext())
@@ -613,6 +622,15 @@ public class MapAdapter implements HMap
             if (c == null)
                 throw new NullPointerException();
 
+            try
+            {
+                if (c.contains(null))
+                    throw new NullPointerException();
+    
+            }catch (NullPointerException npe){} //se c lancia NullPointerException significa che non accetta
+                                                //null come elemento. Quindi sicuramente non conterrà null
+                                                //ed è quindi una HCollection valida.
+            
             int size = size();
             HIterator i = iterator();
             while (i.hasNext())
