@@ -8,8 +8,8 @@ import static org.junit.Assert.*;
 
 public class SetTester
 {
-    MapAdapter map;
-    HSet set;
+    private MapAdapter map;
+    private HSet set;
 
     @Before
     public void initialize()

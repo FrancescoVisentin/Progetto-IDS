@@ -2,7 +2,7 @@ package myAdapter;
 
 import myLib.Hashtable;
 import myLib.Enumeration;
-import java.util.NoSuchElementException;
+import myLib.NoSuchElementException;
 
 
 /**
@@ -686,7 +686,7 @@ public class MapAdapter implements HMap
         {
             if (a == null)
                 throw new NullPointerException();
-                
+
             if (a.length < size())
                 return toArray();
 
