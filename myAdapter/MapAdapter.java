@@ -684,7 +684,10 @@ public class MapAdapter implements HMap
         @Override
         public Object[] toArray(Object[] a)
         {
-            if(a == null || a.length < size())
+            if (a == null)
+                throw new NullPointerException();
+                
+            if (a.length < size())
                 return toArray();
 
             int i = 0;

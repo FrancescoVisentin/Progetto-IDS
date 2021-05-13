@@ -496,7 +496,31 @@ public class SetTester
     @Test
     public void setRetainAllTest()
     {
+        MapAdapter m = new MapAdapter();
+        HSet s = m.entrySet();
 
+        fill(m);
+
+        assertFalse(set.retainAll(s));
+        assertEquals(set.size(), 8);
+
+        s.clear();
+        m.put("uno", 1);
+        m.put(5, "cinque");
+        m.put("due", 22);
+        m.put("", 0);
+        assertTrue(set.retainAll(s));
+        assertEquals(set.size(), 2);
+        assertTrue(map.containsKey("uno"));
+        assertTrue(map.containsKey(5));
+        assertFalse(map.containsKey("due"));
+
+        s.clear();
+
+        assertTrue(set.retainAll(s));
+
+        assertTrue(set.isEmpty());
+        assertTrue(map.isEmpty());
     }
 
     /**
@@ -543,7 +567,21 @@ public class SetTester
     @Test
     public void setToArrayTest()
     {
+        assertEquals(set.size(), 8);
+        Object[] a = set.toArray();
+        assertEquals(set.size(), 8);
+        assertEquals(a.length, 8);
 
+        for (Object o : a)
+        {
+            assertTrue(set.contains(o));
+            assertTrue(set.remove(o));
+        }
+
+        assertTrue(set.isEmpty());
+
+        a = set.toArray();
+        assertEquals(a.length, 0);
     }
 
     /**
@@ -552,7 +590,31 @@ public class SetTester
     @Test
     public void setToArrayObjectTest()
     {
+        Object[] a = new Object[2];
+        assertNotEquals(set.size(), a.length);
         
+        a = set.toArray(a);
+        assertEquals(set.size(), a.length);
+        for (Object o : a)
+            assertTrue(set.contains(o));
+
+        a = new Object[15];
+        for (int i = 0; i < 15; i++)
+            a[i] = i;
+
+        assertNotEquals(set.size(), a.length);
+        a = set.toArray(a);
+        assertNotEquals(set.size(), a.length);
+        assertEquals(a.length, 15);
+        for (int i = 0; i < set.size(); i++)
+        {
+            assertTrue(set.contains(a[i]));
+        }
+
+        for (int i = set.size(); i < a.length; i++)
+        {
+            assertEquals(a[i], i);
+        }
     }
 
     /**
@@ -561,7 +623,20 @@ public class SetTester
     @Test
     public void setToArrayObjectExceptionsTest()
     {
-        
+        assertEquals(set.size(), 8);
+        assertThrows(NullPointerException.class, () -> {set.toArray(null);});
+        assertEquals(set.size(), 8);
+        map.clear();
+        assertThrows(NullPointerException.class, () -> {set.toArray(null);});
+        assertEquals(set.size(), 0);
+
+        fill(map);
+
+        Integer[] i = new Integer[10];
+        assertThrows(ArrayStoreException.class, () -> {set.toArray(i);});
+    
+        assertEquals(map.size(), 8);
+        assertEquals(set.size(), 8);
     }
 
     private static void fill(MapAdapter m)
