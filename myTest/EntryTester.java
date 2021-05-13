@@ -18,9 +18,6 @@ public class EntryTester
         e = getEntry("uno", 1);
         HMap.Entry e2 = getEntry("uno", 1);
 
-        assertFalse(e.equals(null));
-        assertFalse(e.equals(new MapAdapter()));
-
         assertTrue(e.equals(e2));
         assertTrue(e2.equals(e));
 
@@ -31,6 +28,10 @@ public class EntryTester
         e2 = getEntry("", 0);
         assertFalse(e.equals(e2));
         assertFalse(e2.equals(e));
+
+        assertFalse(e.equals(null));
+        assertFalse(e.equals(new MapAdapter()));
+
     }
 
     /**
