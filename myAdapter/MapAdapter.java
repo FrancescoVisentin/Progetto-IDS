@@ -7,10 +7,10 @@ import myLib.NoSuchElementException;
 
 /**
  * The class MapAdapter implements myAdaper.HMap, which maps keys to values.
- * 
+ * <p>
  * This class use an HashTable to store its elements.
  * Any non-{@code null} can be used as a key or value.
- * 
+ * <p>
  * To successfully store and retrive objects from the MapAdapter,
  * the object used as key must implements the {@code hascode} method and the {@code equals} method.
  */
@@ -55,7 +55,7 @@ public class MapAdapter implements HMap
 
     /**
      * Returns true if this MapAdapter contains a mapping for the specified key.
-     * 
+     * <p>
      * More formally, returns true if and only if this MapAdapter contains one mapping to a key k
      * such that {@code key.equals(k)}.
      * There can be at most one such mapping.
@@ -75,7 +75,7 @@ public class MapAdapter implements HMap
 
     /**
      * Returns true if this MapAdapter maps one or more keys to the specified value.
-     * 
+     * <p>
      * More formally, returns true if and only if this MapAdapter contains at least one mapping to a value v
      * such that {@code value.equals(v)}.
      * 
@@ -94,13 +94,13 @@ public class MapAdapter implements HMap
 
     /**
      * Returns a set view of the mappings contained in this MapAdapter.
-     * 
+     * <p>
      * Each element in the returned set is a {@code HMap.Entry}.
-     * 
+     * <p>
      * The set is backed by the MapAdapter, so changes to the MapAdapter are reflected in the set, and vice-versa.
      * If the MapAdapter is modified while an iteration over the set is in progress,
      * the results of the iteration are undefined.
-     * 
+     * <p>
      * The set supports element removal, which removes the corresponding mapping from the MapAdapter,
      * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
      * It does not support the {@code add} or {@code addAll} operations.
@@ -115,7 +115,7 @@ public class MapAdapter implements HMap
 
     /**
      * Compares the specified object with this MapAdapter for equality.
-     * 
+     * <p>
      * Returns true if the given object is also a MapAdapter and the two maps represent the same mappings.
      * More formally, two MapAdapter t1 and t2 represent the same mappings if t1.entrySet().equals(t2.entrySet()).
      * 
@@ -135,7 +135,7 @@ public class MapAdapter implements HMap
 
     /**
      * Returns the value to which this MapAdapter maps the specified key.
-     * 
+     * <p>
      * Returns null if the MapAdapter contains no mapping for this key.
      * 
      * @param key - the key whose associated value is to be returned.
@@ -154,7 +154,7 @@ public class MapAdapter implements HMap
 
     /**
      * Returns the hash code value for this MapAdapter.
-     * 
+     * <p>
      * The hash code of a MapAdapter is defined to be the sum of the hashCodes of each entry
      * in the MapAdapter's entrySet view. This ensures that t1.equals(t2) implies
      * that t1.hashCode()==t2.hashCode() for any two MapAdapter t1 and t2.
@@ -177,7 +177,7 @@ public class MapAdapter implements HMap
 
     /**
      * Returns {@code true} if this MapAdapter contains no key-value mappings.
-     * 
+     * <p>
      * @return {@code true} if this MapAdapter contains no key-value mappings.
      */
     @Override
@@ -188,11 +188,11 @@ public class MapAdapter implements HMap
 
     /**
      * Returns a set view of the keys contained in this MapAdapter.
-     * 
+     * <p>
      * The set is backed by the MapAdapter, so changes to the MapAdapter are reflected in the set, and vice-versa.
      * If the MapAdapter is modified while an iteration over the set is in progress,
      * the results of the iteration are undefined.
-     * 
+     * <p>
      * The set supports element removal, which removes the corresponding mapping from the MapAdapter,
      * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
      * It does not support the {@code add} or {@code addAll} operations.
@@ -207,7 +207,7 @@ public class MapAdapter implements HMap
 
     /**
      * Associates the specified value with the specified key in this MapAdapter.
-     * 
+     * <p>
      * If the MapAdapter previously contained a mapping for this key, the old value
      * is replaced by the specified value.
      * 
@@ -227,10 +227,10 @@ public class MapAdapter implements HMap
 
     /**
      * Copies all of the mappings from the specified map to this MapAdapter.
-     * 
+     * <p>
      * The effect of this call is equivalent to that of calling put(k, v) on this MapAdapter once
      * for each mapping from key k to value v in the specified map.
-     * 
+     * <p>
      * The behavior of this operation is unspecified if the specified map is modified
      * while the operation is in progress.
      * 
@@ -255,10 +255,10 @@ public class MapAdapter implements HMap
 
     /**
      * Removes the mapping for this key from this MapAdapter if it is present.
-     * 
+     * <p>
      * Returns the value to which the MapAdapter previously associated the key,
      * or null if the MapAdapter contained no mapping for this key.
-     * 
+     * <p>
      * The MapAdapter will not contain a mapping for the specified key once the call returns.
      * 
      * @param key - key whose mapping is to be removed from the MapAdapter.
@@ -287,11 +287,11 @@ public class MapAdapter implements HMap
 
     /**
      * Returns a collection view of the values contained in this MapAdapter.
-     * 
+     * <p>
      * The collection is backed by the map, so changes to the map are reflected in the collection, and vice-versa.
      * If the map is modified while an iteration over the collection is in progress,
      * the results of the iteration are undefined.
-     * 
+     * <p>
      * The collection supports element removal, which removes the corresponding mapping from the MapAdapter,
      * via the {@code Iterator.remove}, {@code Set.remove}, {@code removeAll}, {@code retainAll} and {@code clear} operations.
      * It does not support the {@code add} or {@code addAll} operations.

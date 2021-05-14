@@ -6,22 +6,22 @@ import myLib.NoSuchElementException;
 /**
  * The ListAdapter class implements the HList interface by using a Vector as
  * an adaptee to store its elements.
- * 
+ * <p>
  * Any type of object, except {@code null}, can be stored inside a ListAdapter object
  * however the corret behaviour of the class is not guaranteed if the stored elements
  * does not implements the {@code hashCode} and {@code equals} method.
- * 
- * This class has been written to be used in two differents modes:
+ * <p>
+ * This class has been written to be used in two differents modes:<p>
  * 1) a "base list" mode: where the class can access all the elements stored in its underlying Vector.
  *                        All the public constructors of this class create an object configured 
- *                        to work in this mode.
+ *                        to work in this mode.<br>
  * 2) a "sublist" mode: where the class il always linked to another instance of ListAdapter and it
  *                      can only acces a range of elements of the Vector shared between the two classes.
  *                      A ListAdapter congifured to work in this mode can only be obtained via the {@code subList} method.
- * 
+ * <p>
  * To successfully implements this design choice some methods have been written to be able to work in a 
  * different manner when used in in the first or in the second mode.
- * 
+ * <p>
  * @author Francesco Visentin
  */
 public class ListAdapter implements HList
@@ -78,9 +78,10 @@ public class ListAdapter implements HList
 
     /**
      * Inserts the specified element at the specified position in this ListAdapter.
+     *<p>
      * Shifts the element currently at that position (if any) and any subsequent elements to the
      * right (adds one to their indices).
-     *
+     *<p>
      * This ListAdapter will refuse the insertion of null objects.
      *
      * @param   index index at which the specified element is to be inserted.
@@ -105,7 +106,7 @@ public class ListAdapter implements HList
 
     /**
      * Appends the specified element to the end of this ListAdapter.
-     *
+     *<p>
      * This ListAdapter will refuse the insertion of null objects.
      *
      * @param   o element to be appended to this ListAdapter.
@@ -121,7 +122,7 @@ public class ListAdapter implements HList
 
     /**
      * Appends all of the elements in the specified collection to the end of this ListAdapter,
-     * in the order that they are returned by the specified collection's iterator.
+     * in the order that they are returned by the specified collection's iterator.<p>
      * The behavior of this operation is unspecified if the specified collection is modified
      * while the operation is in progress. (Note that this will occur if the specified collection is
      * this list, and it's nonempty.)
@@ -138,7 +139,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Inserts all of the elements in the specified collection into this ListAdapter at the specified position.
+     * Inserts all of the elements in the specified collection into this ListAdapter at the specified position.<p>
      * Shifts the element currently at that position (if any) and any subsequent elements to the
      * right (increases their indices). The new elements will appear in this ListAdapter in the order
      * that they are returned by the specified collection's iterator. The behavior of this operation
@@ -179,7 +180,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes all of the elements from this ListAdapter.
+     * Removes all of the elements from this ListAdapter.<p>
      * This list will be empty after this call returns.
      */
     @Override
@@ -225,7 +226,7 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Returns true if this list contains all of the elements of the specified collection.
+     * Returns true if this list contains all of the elements of the specified collection.<p>
      * Returns true if the collection is empty.
      *
      * @param   c collection to be checked for containment in this list.
@@ -256,8 +257,9 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Compares the specified object with this ListAdapter for equality. Returns {@code true} if
-     * and only if the specified object is also a ListAdapter, both lists have the same size, and
+     * Compares the specified object with this ListAdapter for equality.
+     *<p>
+     * Returns {@code true} if and only if the specified object is also a ListAdapter, both lists have the same size, and
      * all corresponding pairs of elements in the two lists are <i>equal</i>. (Two
      * elements {@code e1} and {@code e2} are <i>equal</i> if {@code e1.equals(e2)}
      * In other words, two lists are defined to be <i>equal</i>
@@ -301,14 +303,14 @@ public class ListAdapter implements HList
     /**
      * Returns the hash code value for this ListAdapter. The hash code of a list is defined to be the
      * result of the following calculation:
-     *  {@code
+     * <pre> {@code
      *   hashCode = 1;
      *   Iterator i = list.iterator();
      *   while (i.hasNext()) {
      *       Object obj = i.next();
      *       hashCode = 31*hashCode + obj.hashCode();
      *   }
-     *  }
+     *  }</pre>
      * This ensures that {@code list1.equals(list2)} implies that {@code list1.hashCode()==list2.hashCode()}
      * for any two lists, {@code list1} and {@code list2}, as required by the general contract
      * {@code of Object.hashCode}.
@@ -361,7 +363,7 @@ public class ListAdapter implements HList
 
     /**
      * Returns {@code true} if this ListAdapter contains no elements.
-     *
+     *<p>
      * @return  {@code true} if this ListAdapter contains no elements.
      */
     @Override
@@ -372,7 +374,7 @@ public class ListAdapter implements HList
 
     /**
      * Returns an iterator over the elements in this ListAdapter in proper sequence.
-     *
+     *<p>
      * @return  an iterator over the elements in this ListAdapter in proper sequence.
      */
     @Override
@@ -408,7 +410,7 @@ public class ListAdapter implements HList
 
     /**
      * Returns a list iterator of the elements in this ListAdapter (in proper sequence).
-     *
+     *<p>
      * @return a list iterator of the elements in this ListAdapter (in proper sequence).
      */
     @Override
@@ -441,8 +443,8 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes the element at the specified position in this ListAdapter. Shifts any
-     * subsequent elements to the left (subtracts one from their indices). Returns
+     * Removes the element at the specified position in this ListAdapter.<p>
+     * Shifts any subsequent elements to the left (subtracts one from their indices). Returns
      * the element that was removed from the list.
      *
      * @param   index the index of the element to removed.
@@ -465,8 +467,8 @@ public class ListAdapter implements HList
     }
 
     /**
-     * Removes the first occurrence in this ListAdapter of the specified element. If this
-     * list does not contain the element, it is unchanged. More formally, removes
+     * Removes the first occurrence in this ListAdapter of the specified element.<p>
+     * If this list does not contain the element, it is unchanged. More formally, removes
      * the element with the lowest index i such that {@code o.equals(get(i))}
      * (if such an element exists).
      *
@@ -611,16 +613,19 @@ public class ListAdapter implements HList
     /**
      * Returns a view of the portion of this ListAdapter between the specified {@code fromIndex},
      * inclusive, and {@code toIndex}, exclusive. (If {@code fromIndex} and {@code toIndex}
-     * are equal, the returned list is empty.) The returned list is backed by this ListAdapter, so
-     * non-structural changes in the returned list are reflected in this list, and vice-versa.
+     * are equal, the returned list is empty.)
+     * <p>
+     * The returned list is backed by this ListAdapter, so non-structural changes in the returned
+     * list are reflected in this list, and vice-versa.
+     *<p>
      * The returned list supports all of the optional list operations supported by this ListAdapter.
      * This method eliminates the need for explicit range operations (of the sort that commonly
      * exist for arrays). Any operation that expects a list can be used as a range operation by passing
      * a subList view instead of a whole list. For example, the following idiom removes a range of
      * elements from a list:
-     *
+     *<pre>
      * 	    {@code ListAdapter.subList(from, to).clear();}
-     *
+     *</pre>
      * Similar idioms may be constructed for {@code indexOf} and {@code lastIndexOf}, and all
      * of the algorithms in the {@code Collections} class can be applied to a subList.
      * The semantics of the list returned by this method become undefined if the backing list
@@ -660,7 +665,9 @@ public class ListAdapter implements HList
 
     /**
      * Returns an array containing all of the elements in this ListAdapter in proper
-     * sequence; the runtime type of the returned array is that of the specified array.
+     * sequence.
+     *<p>
+     * The runtime type of the returned array is that of the specified array.
      *
      * @param   a the array into which the elements of this ListAdapter are to be
      *          stored, if it is big enough; otherwise, a new {@code Object[]} array
